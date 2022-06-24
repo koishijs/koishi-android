@@ -1,11 +1,10 @@
 package cn.anillc.koishi
 
-import android.app.Activity
 import android.os.Bundle
 
-class MainActivity : Activity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+class MainActivity : CoroutineActivity() {
+    override suspend fun onCreateSuspend(savedInstanceState: Bundle?) {
+        runOnUiThread { setContentView(R.layout.main) }
+        install(this)
     }
 }

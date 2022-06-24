@@ -4,6 +4,7 @@
     package="cn.anillc.koishi">
 
     <application
+        android:name=".KoishiApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/koishi"
