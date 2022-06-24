@@ -10,7 +10,6 @@ let
 in buildEnv {
     name = "koishi-env";
     paths = with aarch64-pkgs; [
-        pkgs.prootTermux
         profile
         cacert
         bash

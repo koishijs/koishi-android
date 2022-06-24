@@ -14,7 +14,8 @@ let
     for i in "${info}"; do
       cp -r $i $out/nix/store
     done
-    chmod -R u+w $out/nix
+    cp ${pkgs.prootTermux}/bin/proot-static $out
+    chmod -R u+w $out/nix $out/proot-static
 
     find $out -executable -type f | sed s@^$out/@@ > $out/EXECUTABLES.txt
     find $out -type l | while read -r LINK; do
