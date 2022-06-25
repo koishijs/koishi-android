@@ -8,8 +8,8 @@ import android.os.Process
 class GoCqhttpService : ProotService() {
     fun startGoCqhttp() {
         startProot("""
-            mkdir -p go-cqhttp
-            go-cqhttp -w go-cqhttp -faststart
+            mkdir -p go-cqhttp && cd go-cqhttp
+            go-cqhttp -faststart
         """.trimIndent())
     }
 

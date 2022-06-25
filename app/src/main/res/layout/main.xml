@@ -31,16 +31,16 @@
         android:layout_height="80dp"
         android:layout_marginBottom="50dp"
         android:background="@drawable/round_corner_button"
-        android:onClick="onStartGoCqhttp"
-        android:text="@string/start_go_cqhttp" />
+        android:onClick="onManageGoCqhttp"
+        android:text="@string/manage_go_cqhttp" />
 
     <Button
         android:layout_width="190dp"
         android:layout_height="80dp"
-        android:text="@string/start_koishi"
+        android:text="@string/manage_koishi"
         android:layout_marginBottom="50dp"
         android:background="@drawable/round_corner_button"
-        android:onClick="onStartKoishi"/>
+        android:onClick="onManageKoishi"/>
 
     <Button
         android:layout_width="190dp"

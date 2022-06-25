@@ -33,10 +33,10 @@ class MainActivity : Activity() {
         setContentView(R.layout.main)
     }
 
-    fun onStartGoCqhttp(view: View) =
+    fun onManageGoCqhttp(view: View) =
         startActivity(Intent(this, GoCqhttpActivity::class.java))
 
-    fun onStartKoishi(view: View) =
+    fun onManageKoishi(view: View) =
         startActivity(Intent(this, KoishiActivity::class.java))
 
     fun onStartWebView(view: View) {
