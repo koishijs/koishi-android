@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Koishi</string>
-    <string name="loading">初始化中，请稍候...</string>
+    <string name="loading">初始化中，请稍候…</string>
+    <string name="start_go_cqhttp">管理 go-cqhttp</string>
+    <string name="start_koishi">管理 koishi</string>
+    <string name="start_webview">启动 console</string>
 </resources>

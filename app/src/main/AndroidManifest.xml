@@ -18,13 +18,16 @@
         <!--    android:dataExtractionRules="@xml/data_extraction_rules"-->
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activities.GoCqhttpActivity" />
+        <activity android:name=".activities.KoishiActivity" />
 
         <service android:name=".services.GoCqhttpService" />
 
