@@ -7,6 +7,11 @@ import android.os.Process
 
 class GoCqhttpService : ProotService() {
     fun startGoCqhttp() {
-
+        startProot("""
+            mkdir -p go-cqhttp
+            go-cqhttp -w go-cqhttp -faststart
+        """.trimIndent())
     }
+
+    fun stopGoCqhttp() = stopProot()
 }

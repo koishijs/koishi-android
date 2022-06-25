@@ -12,6 +12,7 @@ class MainActivity : Activity() {
     companion object {
         private const val TAG = "MainActivity"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -20,6 +21,7 @@ class MainActivity : Activity() {
             setContentView(R.layout.loading)
             Thread {
                 application.envPath = install(this)
+                application.onInitialized()
                 runOnUiThread(::activityMain)
             }.start()
         } else {

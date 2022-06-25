@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.startProotProcess
 
 open class ProotService : Service(), Runnable {
@@ -19,11 +20,14 @@ open class ProotService : Service(), Runnable {
         return true
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) = START_STICKY
+
     private var process: Process? = null
 
-    protected fun startProot(cmd: String, envPath: String) {
+    protected fun startProot(cmd: String) {
         if (process != null) return
-        this.process = startProotProcess(cmd, filesDir.path, envPath)
+        this.process =
+            startProotProcess(cmd, filesDir.path, (application as KoishiApplication).envPath)
         Thread(this).start()
     }
 
