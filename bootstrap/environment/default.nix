@@ -9,6 +9,7 @@ let
     login = callPackage ./login.nix {};
 in buildEnv {
     name = "koishi-env";
+    # TODO: /usr/bin/env
     paths = with aarch64-pkgs; [
         profile
         login

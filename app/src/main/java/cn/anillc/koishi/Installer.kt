@@ -14,6 +14,11 @@ fun install(activity: Activity): String {
     val packageData = activity.filesDir.path
     val dataPath = "$packageData/data"
     val dataStagingPath = "$packageData/data-staging"
+    val homeFile = File("$packageData/home")
+
+    if (!homeFile.exists() && !homeFile.mkdirs()) {
+        throw Exception("cannot create home dir")
+    }
 
     if (File(dataPath).exists()) {
         return FileReader("$dataPath/env.txt").use(FileReader::readText).trim()
@@ -21,7 +26,7 @@ fun install(activity: Activity): String {
 
     var progress: ProgressDialog? = null
     activity.runOnUiThread {
-        progress = ProgressDialog.show(activity, "test", "www")
+        progress = ProgressDialog.show(activity, "Koishi Installer", "installing")
     }
 
     val dataStagingFile = File(dataStagingPath)

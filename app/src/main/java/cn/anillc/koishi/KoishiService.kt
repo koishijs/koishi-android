@@ -16,24 +16,12 @@ class KoishiService : Service() {
     private val binder = LocalBinder(this)
     override fun onBind(intent: Intent?): IBinder = binder
 
-    private lateinit var process: Process
+    private var process: Process? = null
 
     fun startKoishi(envPath: String) {
-        if (::process.isInitialized) return
-        val packagePath = filesDir.path
-        val processBuilder = ProcessBuilder(
-            "${packagePath}/data/proot-static",
-            "-r", "${packagePath}/data${envPath}",
-            "-b", "${packagePath}/data/tmp:/tmp",
-            "-b", "${packagePath}/data/nix:/nix",
-            "-b", "${packagePath}/data:/data",
-            "--sysvipc",
-            "--link2symlink",
-            "/bin/sh", "/bin/login"
-        ).redirectErrorStream(true)
-        val environment = processBuilder.environment()
-        environment["PROOT_TMP_DIR"] = "$packagePath/data/tmp"
-        process = processBuilder.start()
+        if (process != null) return
+        val process = startProotProcess("go-cqhttp", filesDir.path, envPath)
+        this.process = process
         Thread {
             val input = process.inputStream.bufferedReader()
             for (i in input.lines()) {
