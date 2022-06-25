@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Koishi</string>
+    <string name="loading">初始化中，请稍候...</string>
 </resources>

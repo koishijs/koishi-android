@@ -8,6 +8,7 @@ fun startProotProcess(cmd: String, packagePath: String, envPath: String): Proces
         "-b", "$packagePath/data/nix:/nix",
         "-b", "$packagePath/data:/data",
         "-b", "$packagePath/home:/home",
+        "-b", "/proc:/proc",
         "--sysvipc",
         "--link2symlink",
         "/bin/sh", "/bin/login", "-c", cmd

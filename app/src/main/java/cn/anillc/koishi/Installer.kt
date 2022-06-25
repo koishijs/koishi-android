@@ -1,7 +1,6 @@
 package cn.anillc.koishi
 
-import android.app.Activity
-import android.app.ProgressDialog
+import android.content.Context
 import android.system.Os
 import android.util.Log
 import java.io.*
@@ -10,23 +9,22 @@ import java.util.zip.ZipInputStream
 
 const val TAG = "Installer"
 
-fun install(activity: Activity): String {
-    val packageData = activity.filesDir.path
+fun getEnvPath(context: Context): String? {
+    val dataPath = "${context.filesDir.path}/data"
+    if(File(dataPath).exists()) {
+        return FileReader("$dataPath/env.txt").use(FileReader::readText).trim()
+    }
+    return null
+}
+
+fun install(context: Context): String {
+    val packageData = context.filesDir.path
     val dataPath = "$packageData/data"
     val dataStagingPath = "$packageData/data-staging"
     val homeFile = File("$packageData/home")
 
     if (!homeFile.exists() && !homeFile.mkdirs()) {
         throw Exception("cannot create home dir")
-    }
-
-    if (File(dataPath).exists()) {
-        return FileReader("$dataPath/env.txt").use(FileReader::readText).trim()
-    }
-
-    var progress: ProgressDialog? = null
-    activity.runOnUiThread {
-        progress = ProgressDialog.show(activity, "Koishi Installer", "installing")
     }
 
     val dataStagingFile = File(dataStagingPath)
@@ -42,7 +40,7 @@ fun install(activity: Activity): String {
     var envPathFrom: Reader? = null
     var envPathTo: Writer? = null
     try {
-        envPathFrom = activity.assets.open("bootstrap/env.txt").reader()
+        envPathFrom = context.assets.open("bootstrap/env.txt").reader()
         envPathTo = FileWriter("$dataStagingPath/env.txt")
         val content = envPathFrom.readText()
         envPathTo.write(content)
@@ -57,7 +55,7 @@ fun install(activity: Activity): String {
 
     var zip: ZipInputStream? = null
     try {
-        zip = ZipInputStream(activity.assets.open("bootstrap/bootstrap.zip"))
+        zip = ZipInputStream(context.assets.open("bootstrap/bootstrap.zip"))
         var entry: ZipEntry?
         while (run { entry = zip.nextEntry; entry } != null) {
             val zipEntry = entry!!
@@ -112,10 +110,6 @@ fun install(activity: Activity): String {
 
     if (!File("$dataPath/tmp").mkdir()) {
         throw Exception("failed to create tmp folder")
-    }
-
-    activity.runOnUiThread {
-        progress?.hide()
     }
 
     return envPath!!.trim()
