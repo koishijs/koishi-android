@@ -1,122 +1,113 @@
 package cn.anillc.koishi
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.system.Os
 import android.util.Log
-import cn.anillc.koishi.base.CoroutineActivity
-import io.vertx.kotlin.coroutines.await
 import java.io.*
-import java.lang.Exception
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
 const val TAG = "Installer"
 
-suspend fun install(activity: CoroutineActivity): String {
-    val fileSystem = activity.vertx.fileSystem()
-
+fun install(activity: Activity): String {
     val packageData = activity.filesDir.path
     val dataPath = "$packageData/data"
     val dataStagingPath = "$packageData/data-staging"
 
-    if (fileSystem.exists(dataPath).await()) {
-        return fileSystem.readFile("$packageData/env.txt").await().toString().trim()
+    if (File(dataPath).exists()) {
+        return FileReader("$dataPath/env.txt").use(FileReader::readText).trim()
     }
-
-    if (fileSystem.exists(dataStagingPath).await()) {
-        activity.vertx.execute {
-            deleteFolder(File(dataStagingPath))
-        }
-    }
-
-    var envPath: String? = null
 
     var progress: ProgressDialog? = null
     activity.runOnUiThread {
         progress = ProgressDialog.show(activity, "test", "www")
     }
 
-    activity.vertx.execute {
-        var from: Reader? = null
-        var to: Writer? = null
-        try {
-            from = activity.assets.open("bootstrap/env.txt").reader()
-            to = FileWriter("$packageData/env.txt")
-            val content = from.readText()
-            to.write(content)
-            envPath = content
-        } finally {
-            from?.close()
-            to?.close()
-        }
-    }.await()
+    val dataStagingFile = File(dataStagingPath)
+    if (dataStagingFile.exists()) {
+        deleteFolder(dataStagingFile)
+    }
 
-    activity.vertx.execute {
-        val executables = arrayListOf<String>()
-        val symlinks = arrayListOf<Pair<String, String>>()
+    if (!dataStagingFile.mkdirs()) {
+        throw Exception("cannot create data-staging folder")
+    }
 
-        var zip: ZipInputStream? = null
-        try {
-            zip = ZipInputStream(activity.assets.open("bootstrap/bootstrap.zip"))
-            var entry: ZipEntry?
-            while (run { entry = zip.nextEntry; entry } != null) {
-                val zipEntry = entry!!
-                when (zipEntry.name) {
-                    // readLine will closes stream
-                    "EXECUTABLES.txt" -> executables.addAll(zip.reader()
-                        .readText().split("\n").filter { it != "" })
-                    "SYMLINKS.txt" -> symlinks.addAll(zip.reader()
-                            .readText().split("\n").filter { it != "" }.map {
+    val envPath: String?
+    var envPathFrom: Reader? = null
+    var envPathTo: Writer? = null
+    try {
+        envPathFrom = activity.assets.open("bootstrap/env.txt").reader()
+        envPathTo = FileWriter("$dataStagingPath/env.txt")
+        val content = envPathFrom.readText()
+        envPathTo.write(content)
+        envPath = content
+    } finally {
+        envPathFrom?.close()
+        envPathTo?.close()
+    }
+
+    val executables = arrayListOf<String>()
+    val symlinks = arrayListOf<Pair<String, String>>()
+
+    var zip: ZipInputStream? = null
+    try {
+        zip = ZipInputStream(activity.assets.open("bootstrap/bootstrap.zip"))
+        var entry: ZipEntry?
+        while (run { entry = zip.nextEntry; entry } != null) {
+            val zipEntry = entry!!
+            when (zipEntry.name) {
+                // readLine will closes stream
+                "EXECUTABLES.txt" -> executables.addAll(zip.reader()
+                    .readText().split("\n").filter { it != "" })
+                "SYMLINKS.txt" -> symlinks.addAll(zip.reader()
+                    .readText().split("\n").filter { it != "" }.map {
                         val (to, from) = it.split("←")
                         to to from
                     })
-                    else -> {
-                        val name = zipEntry.name
-                        val file = File(dataStagingPath, name)
-                        if (zipEntry.isDirectory) {
-                            file.mkdirs()
-                        } else {
-                            file.parentFile.mkdirs()
+                else -> {
+                    val name = zipEntry.name
+                    val file = File(dataStagingPath, name)
+                    if (zipEntry.isDirectory) {
+                        file.mkdirs()
+                    } else {
+                        file.parentFile.mkdirs()
 
-                            FileOutputStream(file).use {
-                                zip.copyTo(it)
-                            }
+                        FileOutputStream(file).use {
+                            zip.copyTo(it)
                         }
                     }
                 }
             }
-
-            for (executable in executables) {
-                try {
-                    Os.chmod("$dataStagingPath/$executable", 448) // 0700
-                } catch (e: Exception) {
-                    Log.e(TAG, "install: failed to chmod: $executable", e)
-                }
-            }
-
-            for (symlink in symlinks) {
-                val (to, from) = symlink
-                try {
-                    Os.symlink(to, "$dataStagingPath/$from")
-                } catch (e: Exception) {
-                    Log.e(TAG, "install: failed to create symlink: $to ← $dataStagingPath/$from", e)
-                }
-            }
-
-            if (!File(dataStagingPath).renameTo(File(dataPath))) {
-                throw Exception("failed to rename staging")
-            }
-        } finally {
-            zip?.close()
         }
 
-    }.await()
-
-    activity.vertx.execute {
-        if (!File("$dataPath/tmp").mkdir()) {
-            throw Exception("failed to create tmp folder")
+        for (executable in executables) {
+            try {
+                Os.chmod("$dataStagingPath/$executable", 448) // 0700
+            } catch (e: Exception) {
+                Log.e(TAG, "install: failed to chmod: $executable", e)
+            }
         }
-    }.await()
+
+        for (symlink in symlinks) {
+            val (to, from) = symlink
+            try {
+                Os.symlink(to, "$dataStagingPath/$from")
+            } catch (e: Exception) {
+                Log.e(TAG, "install: failed to create symlink: $to ← $dataStagingPath/$from", e)
+            }
+        }
+
+        if (!File(dataStagingPath).renameTo(File(dataPath))) {
+            throw Exception("failed to rename staging")
+        }
+    } finally {
+        zip?.close()
+    }
+
+    if (!File("$dataPath/tmp").mkdir()) {
+        throw Exception("failed to create tmp folder")
+    }
 
     activity.runOnUiThread {
         progress?.hide()

@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cn.anillc.koishi">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
-        android:name=".KoishiApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/koishi"

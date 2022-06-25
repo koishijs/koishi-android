@@ -13,8 +13,7 @@ in buildEnv {
         profile
         login
         cacert
-        bash
-        coreutils
+        busybox
         nodejs_latest
         pkgs.inputs.anillc.packages.aarch64-linux.go-cqhttp
         (yarn.overrideAttrs (x: {

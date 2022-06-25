@@ -8,5 +8,5 @@ let
 in writeScriptBin "login" ''
     set -e
     . /etc/profile
-    exec bash "$@"
+    exec sh "$@"
 ''
