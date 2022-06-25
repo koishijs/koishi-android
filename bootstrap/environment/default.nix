@@ -11,11 +11,12 @@ in buildEnv {
     name = "koishi-env";
     paths = with aarch64-pkgs; [
         profile
+        login
         cacert
         bash
         coreutils
         nodejs_latest
-        go-cqhttp
+        pkgs.inputs.anillc.packages.aarch64-linux.go-cqhttp
         (yarn.overrideAttrs (x: {
             buildInputs = [ nodejs_latest ];
         }))

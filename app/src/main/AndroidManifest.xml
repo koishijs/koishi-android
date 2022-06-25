@@ -23,6 +23,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".KoishiService" />
+
     </application>
 
 </manifest>

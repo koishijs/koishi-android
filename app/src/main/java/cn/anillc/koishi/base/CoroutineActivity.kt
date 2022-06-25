@@ -1,7 +1,8 @@
-package cn.anillc.koishi
+package cn.anillc.koishi.base
 
 import android.app.Activity
 import android.os.Bundle
+import cn.anillc.koishi.KoishiApplication
 import io.vertx.core.Vertx
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -27,7 +28,7 @@ open class CoroutineActivity : Activity(), CoroutineScope {
         }
     }
     
-    open suspend fun onCreateSuspend(savedInstanceState: Bundle?) { }
+    open suspend fun onCreateSuspend(savedInstanceState: Bundle?) {}
 
     override fun onDestroy() {
         cancel()

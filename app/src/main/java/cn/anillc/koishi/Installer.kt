@@ -3,6 +3,7 @@ package cn.anillc.koishi
 import android.app.ProgressDialog
 import android.system.Os
 import android.util.Log
+import cn.anillc.koishi.base.CoroutineActivity
 import io.vertx.kotlin.coroutines.await
 import java.io.*
 import java.lang.Exception
@@ -19,7 +20,7 @@ suspend fun install(activity: CoroutineActivity): String {
     val dataStagingPath = "$packageData/data-staging"
 
     if (fileSystem.exists(dataPath).await()) {
-        return fileSystem.readFile("$packageData/env.txt").await().toString()
+        return fileSystem.readFile("$packageData/env.txt").await().toString().trim()
     }
 
     if (fileSystem.exists(dataStagingPath).await()) {
@@ -43,7 +44,7 @@ suspend fun install(activity: CoroutineActivity): String {
             to = FileWriter("$packageData/env.txt")
             val content = from.readText()
             to.write(content)
-            envPath = content.trim()
+            envPath = content
         } finally {
             from?.close()
             to?.close()
@@ -87,7 +88,7 @@ suspend fun install(activity: CoroutineActivity): String {
 
             for (executable in executables) {
                 try {
-                    Os.chmod("$dataStagingPath/$executable", 700)
+                    Os.chmod("$dataStagingPath/$executable", 448) // 0700
                 } catch (e: Exception) {
                     Log.e(TAG, "install: failed to chmod: $executable", e)
                 }
@@ -111,11 +112,17 @@ suspend fun install(activity: CoroutineActivity): String {
 
     }.await()
 
+    activity.vertx.execute {
+        if (!File("$dataPath/tmp").mkdir()) {
+            throw Exception("failed to create tmp folder")
+        }
+    }.await()
+
     activity.runOnUiThread {
         progress?.hide()
     }
 
-    return envPath!!
+    return envPath!!.trim()
 }
 
 fun deleteFolder(file: File) {

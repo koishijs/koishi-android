@@ -6,16 +6,19 @@
         url = "github:Anillc/nix-on-droid";
         inputs.nixpkgs.follows = "nixpkgs";
     };
-    outputs = { self, nixpkgs, flake-utils, anillc, nix-on-droid }:
+    outputs = inputs@{ self, nixpkgs, flake-utils, anillc, nix-on-droid }:
         with flake-utils.lib;
     eachDefaultSystem (system: let
         pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            (oself: osuper: self.packages.${system})
-            (oself: osuper: anillc.packages.${system})
-            (oself: osuper: nix-on-droid.packages.${system})
-          ];
+            inherit system;
+            overlays = [
+                (oself: osuper: self.packages.${system}
+                    // anillc.packages.${system}
+                    // nix-on-droid.packages.${system}
+                    // {
+                        inherit inputs;
+                    })
+            ];
         };
     in {
         packages.bootstrap = pkgs.callPackage ./bootstrap.nix {};

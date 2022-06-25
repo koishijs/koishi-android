@@ -1,4 +1,4 @@
-{ runCommand, lib }:
+{ writeScriptBin, lib }:
 
 with builtins;
 with lib;
