@@ -26,10 +26,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.GoCqhttpActivity" />
         <activity android:name=".activities.KoishiActivity" />
 
-        <service android:name=".services.GoCqhttpService" />
         <service android:name=".services.KoishiService" />
 
     </application>

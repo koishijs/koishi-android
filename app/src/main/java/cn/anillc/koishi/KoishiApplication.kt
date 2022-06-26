@@ -6,27 +6,22 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import cn.anillc.koishi.services.GoCqhttpService
 import cn.anillc.koishi.services.KoishiService
 import cn.anillc.koishi.services.ProotService
 
 class KoishiApplication : Application() {
 
     class KoishiServiceConnection : ServiceConnection {
-        var goCqhttpBinder: ProotService.LocalBinder? = null
         var koishiBinder: ProotService.LocalBinder? = null
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
             when (name.className) {
-                GoCqhttpService::class.qualifiedName ->
-                    goCqhttpBinder = binder as ProotService.LocalBinder
                 KoishiService::class.qualifiedName ->
                     koishiBinder = binder as ProotService.LocalBinder
                 else -> throw Exception("unknown service")
             }
-            Log.i(TAG, "onServiceConnected: ${GoCqhttpService::class.qualifiedName}")
+            Log.i(TAG, "onServiceConnected: ${KoishiService::class.qualifiedName}")
         }
         override fun onServiceDisconnected(name: ComponentName) = when (name.className) {
-            GoCqhttpService::class.qualifiedName -> goCqhttpBinder = null
             KoishiService::class.qualifiedName -> koishiBinder = null
             else -> throw Exception("unknown service")
         }
@@ -47,9 +42,6 @@ class KoishiApplication : Application() {
 
     // be called after envPath is set
     fun onInitialized() {
-        bindService(
-            Intent(this, GoCqhttpService::class.java),
-            serviceConnection, BIND_AUTO_CREATE)
         bindService(
             Intent(this, KoishiService::class.java),
             serviceConnection, BIND_AUTO_CREATE)

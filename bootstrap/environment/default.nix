@@ -14,7 +14,6 @@ in buildEnv {
     paths = with aarch64-pkgs; [
         profile login env
         resolvconf cacert
-        pkgs.inputs.anillc.packages.aarch64-linux.go-cqhttp
         busybox
         nodejs_latest
         (yarn.overrideAttrs (x: {

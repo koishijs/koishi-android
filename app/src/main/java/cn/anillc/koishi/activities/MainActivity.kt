@@ -33,9 +33,6 @@ class MainActivity : Activity() {
         setContentView(R.layout.main)
     }
 
-    fun onManageGoCqhttp(view: View) =
-        startActivity(Intent(this, GoCqhttpActivity::class.java))
-
     fun onManageKoishi(view: View) =
         startActivity(Intent(this, KoishiActivity::class.java))
 

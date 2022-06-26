@@ -25,17 +25,17 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_go_cqhttp"
+            android:text="@string/start_koishi"
             android:layout_marginEnd="50dp"
             style="?android:attr/buttonBarButtonStyle"
-            android:onClick="onStartGoCqhttp" />
+            android:onClick="onStartKoishi" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stop_go_cqhttp"
+            android:text="@string/stop_koishi"
             style="?android:attr/buttonBarButtonStyle"
-            android:onClick="onStopGoCqhttp"/>
+            android:onClick="onStopKoishi"/>
 
     </LinearLayout>
 
