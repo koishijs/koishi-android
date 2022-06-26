@@ -38,10 +38,12 @@ class KoishiActivity : Activity() {
         val binder = getBinder() ?: return
         binder.onInput = {
             runOnUiThread {
-                val str = it.replace(Regex("\\e\\[[\\d;]*[^\\d;]"), "")
-                tv.append("\n$str")
-                sv.post { sv.fullScroll(View.FOCUS_DOWN) }
+                val text = it.replace(Regex("\\e\\[[\\d;]*[^\\d;]"), "")
+                appendText("\n$text")
             }
+        }
+        binder.onExit = {
+            runOnUiThread { appendText("\n\n[Process exited.]\n") }
         }
         (binder.service as KoishiService).startKoishi()
     }
@@ -51,14 +53,16 @@ class KoishiActivity : Activity() {
         binder.service as KoishiService
         if (binder.service.process == null) return
         binder.service.stopKoishi()
-        runOnUiThread {
-            tv.append("\n\n[Process exited.]\n")
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         val binder = getBinder() ?: return
         binder.onInput = null
+    }
+
+    fun appendText(text: String) {
+        tv.append(text)
+        sv.post { sv.fullScroll(View.FOCUS_DOWN) }
     }
 }
