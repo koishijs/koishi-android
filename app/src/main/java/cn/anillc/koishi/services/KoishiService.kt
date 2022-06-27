@@ -12,5 +12,5 @@ class KoishiService : ProotService() {
         """.trimIndent())
     }
 
-    fun stopKoishi() = Thread { stopProot() }.start()
+    fun stopKoishi() = stopProot()
 }
