@@ -8,20 +8,32 @@ import android.util.Log
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.pid
 import cn.anillc.koishi.startProotProcess
-import java.io.InterruptedIOException
-import java.lang.Exception
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 open class ProotService : Service(), Runnable {
     companion object {
         val TAG = this::class.simpleName
+        const val PROCESS_NOT_INITIALIZED = -1
+        const val PROCESS_FORCE_KILLED = -2
     }
 
-    // TODO: onExit
+    private lateinit var packagePath: String
+    private lateinit var envPath: String
+
     class LocalBinder(
         val service: ProotService,
         var onInput: ((line: String) -> Unit)?,
         var onExit: ((exitValue: Int) -> Unit)?,
     ) : Binder()
+
+    override fun onCreate() {
+        super.onCreate()
+        packagePath = filesDir.path
+        envPath = (application as KoishiApplication).envPath
+    }
 
     private val binder by lazy { LocalBinder(this, null, null) }
     override fun onBind(intent: Intent?): IBinder = binder
@@ -30,38 +42,96 @@ open class ProotService : Service(), Runnable {
 
     var process: Process? = null
         private set
+    private var pid = AtomicInteger(PROCESS_NOT_INITIALIZED)
+    private var status = AtomicInteger(PROCESS_NOT_INITIALIZED)
+    private val processLock = ReentrantLock()
+    private val statusCondition = processLock.newCondition()
 
     protected fun startProot(cmd: String) {
         if (process != null) return
-        this.process =
-            startProotProcess(cmd, filesDir.path, (application as KoishiApplication).envPath)
+        processLock.withLock {
+            this.process =
+                startProotProcess(
+                    """
+                setsid sh -c '
+                    trap : SIGINT # to get status of process
+                    echo __PID__: $$
+                    $cmd
+                    echo __STATUS__: $?
+                '
+            """.trimIndent(), packagePath, envPath
+                )
+        }
         Thread(this).start()
     }
 
-    protected fun stopProot() {
-        val tProcess = process ?: return
-        tProcess.destroy()
-        process = null
+    protected fun stopProot(): Int {
+        processLock.lock()
+        val process = this.process ?: return status.get()
+        processLock.unlock()
+        val pid = this.pid.get()
+        if (pid == -1) {
+            android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
+        } else {
+            val killProcess = startProotProcess(
+                """
+                ps -o pid,pgid | awk '{ if ($1 == "$pid") print "-" $2 }' | xargs kill -SIGINT
+            """.trimIndent(), packagePath, envPath
+            )
+            killProcess.waitFor()
+            if (killProcess.exitValue() != 0) {
+                killProcess.inputStream.bufferedReader().use {
+                    Log.i(TAG, "stopProot: ${it.readText()}")
+                }
+            }
+        }
+        processLock.withLock {
+            if (!statusCondition.await(10, TimeUnit.SECONDS)) {
+                android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
+                return PROCESS_FORCE_KILLED
+            }
+        }
+        return status.get()
     }
 
     override fun run() {
         try {
+            processLock.lock()
             val tProcess = process ?: return
+            processLock.unlock()
+            val pidRegex = Regex("^__PID__: (\\d+)$")
+            val statusRegex = Regex("^__STATUS__: (\\d+)$")
             val reader = tProcess.inputStream.bufferedReader()
             for (i in reader.lines()) {
+                if (pid.get() == -1) {
+                    val pidMatch = pidRegex.matchEntire(i)
+                    if (pidMatch != null) {
+                        pid.set(pidMatch.groupValues[1].toInt())
+                        continue
+                    }
+                }
+                if (status.get() == -1) {
+                    val statusMatch = statusRegex.matchEntire(i)
+                    if (statusMatch != null) {
+                        status.set(statusMatch.groupValues[1].toInt())
+                        processLock.withLock(statusCondition::signalAll)
+                        continue
+                    }
+                }
                 val onInput = binder.onInput ?: continue
                 onInput(i)
             }
             tProcess.waitFor()
             val onExit = binder.onExit ?: return
             onExit(tProcess.exitValue())
-        } catch (e: InterruptedIOException) {
-            Log.e(TAG, "run", e)
         } catch (e: Exception) {
             throw e
         } finally {
+            this.process = null
             binder.onInput = null
             binder.onExit = null
+            pid.set(PROCESS_NOT_INITIALIZED)
+            status.set(PROCESS_NOT_INITIALIZED)
         }
     }
 }
