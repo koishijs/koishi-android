@@ -8,6 +8,7 @@ import android.os.Process
 class KoishiService : ProotService() {
     fun startKoishi() {
         startProot("""
+            echo Starting koishi...
             yarn start
         """.trimIndent())
     }

@@ -20,20 +20,14 @@ open class ProotService : Service(), Runnable {
         const val PROCESS_FORCE_KILLED = -2
     }
 
-    private lateinit var packagePath: String
-    private lateinit var envPath: String
-
     class LocalBinder(
         val service: ProotService,
         var onInput: ((line: String) -> Unit)?,
         var onExit: ((exitValue: Int) -> Unit)?,
     ) : Binder()
 
-    override fun onCreate() {
-        super.onCreate()
-        packagePath = filesDir.path
-        envPath = (application as KoishiApplication).envPath
-    }
+    private lateinit var packagePath: String
+    private lateinit var envPath: String
 
     private val binder by lazy { LocalBinder(this, null, null) }
     override fun onBind(intent: Intent?): IBinder = binder
@@ -42,10 +36,19 @@ open class ProotService : Service(), Runnable {
 
     var process: Process? = null
         private set
+    var log = ""
+        private set
+    var stopping = false
     private var pid = AtomicInteger(PROCESS_NOT_INITIALIZED)
     private var status = AtomicInteger(PROCESS_NOT_INITIALIZED)
     private val processLock = ReentrantLock()
     private val statusCondition = processLock.newCondition()
+
+    override fun onCreate() {
+        super.onCreate()
+        packagePath = filesDir.path
+        envPath = (application as KoishiApplication).envPath
+    }
 
     protected fun startProot(cmd: String) {
         if (process != null) return
@@ -53,24 +56,27 @@ open class ProotService : Service(), Runnable {
             this.process =
                 startProotProcess(
                     """
-                setsid sh -c '
+                setsid sh -c "
                     trap : SIGINT # to get status of process
                     echo __PID__: $$
                     $cmd
                     echo __STATUS__: $?
-                '
+                    echo -e '\n[Process exited.]\n\n'
+                "
             """.trimIndent(), packagePath, envPath
                 )
         }
         Thread(this).start()
     }
 
-    protected fun stopProot(): Int {
+    protected fun stopProot() {
         processLock.lock()
-        val process = this.process ?: return status.get()
+        if (stopping) return
+        val process = this.process ?: return
+        stopping = true
         processLock.unlock()
         val pid = this.pid.get()
-        if (pid == -1) {
+        if (pid == PROCESS_NOT_INITIALIZED) {
             android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
         } else {
             val killProcess = startProotProcess(
@@ -85,13 +91,14 @@ open class ProotService : Service(), Runnable {
                 }
             }
         }
-        processLock.withLock {
-            if (!statusCondition.await(10, TimeUnit.SECONDS)) {
-                android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
-                return PROCESS_FORCE_KILLED
+        Thread {
+            processLock.withLock {
+                if (!statusCondition.await(10, TimeUnit.SECONDS)) {
+                    android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
+                    status.set(PROCESS_FORCE_KILLED)
+                }
             }
-        }
-        return status.get()
+        }.start()
     }
 
     override fun run() {
@@ -118,12 +125,13 @@ open class ProotService : Service(), Runnable {
                         continue
                     }
                 }
+                log += "\n$i"
                 val onInput = binder.onInput ?: continue
                 onInput(i)
             }
             tProcess.waitFor()
             val onExit = binder.onExit ?: return
-            onExit(tProcess.exitValue())
+            onExit(status.get())
         } catch (e: Exception) {
             throw e
         } finally {
@@ -132,6 +140,7 @@ open class ProotService : Service(), Runnable {
             binder.onExit = null
             pid.set(PROCESS_NOT_INITIALIZED)
             status.set(PROCESS_NOT_INITIALIZED)
+            stopping = false
         }
     }
 }

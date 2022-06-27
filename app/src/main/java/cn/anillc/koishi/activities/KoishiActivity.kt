@@ -21,6 +21,8 @@ class KoishiActivity : Activity() {
     private lateinit var koishiApplication: KoishiApplication
     private lateinit var tv: TextView
     private lateinit var sv: ScrollView
+    private lateinit var binder: ProotService.LocalBinder
+    private lateinit var koishiService: KoishiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,40 +31,35 @@ class KoishiActivity : Activity() {
         tv = findViewById(R.id.go_cqhttp_tv)
         sv = tv.parent as ScrollView
 
-        val binder = getBinder()
-        if (binder == null) {
-            Log.e(TAG, "onCreate: Service not initialized")
-            Toast.makeText(this, "Service not initialized", Toast.LENGTH_LONG).show()
-            finish()
-            return
-        }
-        setListener(binder)
+        val binder = getBinder() ?: return
+        this.binder = binder
+        this.koishiService = binder.service as KoishiService
+
+        appendText(koishiService.log)
+        setListener()
     }
 
     private fun getBinder(): ProotService.LocalBinder? {
         val binder = koishiApplication.serviceConnection.koishiBinder
         if (binder == null) {
             Toast.makeText(this, R.string.failed_to_get_service, Toast.LENGTH_LONG).show()
+            finish()
             return null
         }
         return binder
     }
 
     fun onStartKoishi(view: View) {
-        val binder = getBinder()!!
-        setListener(binder)
-        (binder.service as KoishiService).startKoishi()
+        setListener()
+        koishiService.startKoishi()
     }
 
-    fun onStopKoishi(view: View) {
-        val service = getBinder()!!.service as KoishiService
-        service.stopKoishi()
-    }
+
+    fun onStopKoishi(view: View) = koishiService.stopKoishi()
 
     override fun onDestroy() {
         super.onDestroy()
-        val binder = getBinder() ?: return
-        binder.onInput = null
+        removeListener()
     }
 
     private fun appendText(text: String) {
@@ -70,15 +67,17 @@ class KoishiActivity : Activity() {
         sv.post { sv.fullScroll(View.FOCUS_DOWN) }
     }
 
-    private fun setListener(binder: ProotService.LocalBinder) {
+    private fun setListener() {
         binder.onInput = {
             runOnUiThread {
                 val text = it.replace(Regex("\\e\\[[\\d;]*[^\\d;]"), "")
                 appendText("\n$text")
             }
         }
-        binder.onExit = {
-            runOnUiThread { appendText("\n\n[Process exited.]\n") }
-        }
+    }
+
+    private fun removeListener() {
+        binder.onInput = null
+        binder.onExit = null
     }
 }
