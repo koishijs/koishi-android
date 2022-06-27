@@ -10,38 +10,27 @@ import java.util.zip.ZipInputStream
 const val TAG = "Installer"
 
 fun getEnvPath(context: Context): String? {
-    val dataPath = "${context.filesDir.path}/data"
-    if(File(dataPath).exists()) {
-        return FileReader("$dataPath/env.txt").use(FileReader::readText).trim()
+    val envFile = "${context.filesDir.path}/env.txt"
+    if (File(envFile).exists()) {
+        return FileReader(envFile).use(FileReader::readText).trim()
     }
     return null
 }
 
 fun install(context: Context): String {
+    unpackZip("bootstrap/home.zip", "home", context)
+    return copyData(context)
+}
+
+fun copyData(context: Context): String {
     val packageData = context.filesDir.path
-    val dataPath = "$packageData/data"
-    val dataStagingPath = "$packageData/data-staging"
-    val homeFile = File("$packageData/home")
-
-    if (!homeFile.exists() && !homeFile.mkdirs()) {
-        throw Exception("cannot create home dir")
-    }
-
-    val dataStagingFile = File(dataStagingPath)
-    if (dataStagingFile.exists()) {
-        deleteFolder(dataStagingFile)
-    }
-
-    if (!dataStagingFile.mkdirs()) {
-        throw Exception("cannot create data-staging folder")
-    }
 
     val envPath: String?
     var envPathFrom: Reader? = null
     var envPathTo: Writer? = null
     try {
         envPathFrom = context.assets.open("bootstrap/env.txt").reader()
-        envPathTo = FileWriter("$dataStagingPath/env.txt")
+        envPathTo = FileWriter("$packageData/env.txt")
         val content = envPathFrom.readText()
         envPathTo.write(content)
         envPath = content
@@ -50,12 +39,36 @@ fun install(context: Context): String {
         envPathTo?.close()
     }
 
+    unpackZip("bootstrap/bootstrap.zip", "data", context)
+
+    if (!File("$packageData/tmp").mkdir()) {
+        throw Exception("failed to create tmp folder")
+    }
+
+    return envPath!!.trim()
+}
+
+fun unpackZip(fileName: String, target: String, context: Context) {
+    val packagePath = context.filesDir.path
+    val targetPath = "$packagePath/$target"
+    val stagingPath = "$packagePath/$target-staging"
+    val targetFile = File(targetPath)
+    val stagingFile = File(stagingPath)
+
+    if (stagingFile.exists()) {
+        deleteFolder(stagingFile)
+    }
+
+    if (!stagingFile.mkdirs()) {
+        throw Exception("cannot create data-staging folder")
+    }
+
     val executables = arrayListOf<String>()
     val symlinks = arrayListOf<Pair<String, String>>()
 
     var zip: ZipInputStream? = null
     try {
-        zip = ZipInputStream(context.assets.open("bootstrap/bootstrap.zip"))
+        zip = ZipInputStream(context.assets.open(fileName))
         var entry: ZipEntry?
         while (run { entry = zip.nextEntry; entry } != null) {
             val zipEntry = entry!!
@@ -70,7 +83,7 @@ fun install(context: Context): String {
                     })
                 else -> {
                     val name = zipEntry.name
-                    val file = File(dataStagingPath, name)
+                    val file = File(stagingPath, name)
                     if (zipEntry.isDirectory) {
                         file.mkdirs()
                     } else {
@@ -86,7 +99,7 @@ fun install(context: Context): String {
 
         for (executable in executables) {
             try {
-                Os.chmod("$dataStagingPath/$executable", 448) // 0700
+                Os.chmod("$stagingPath/$executable", 448) // 0700
             } catch (e: Exception) {
                 Log.e(TAG, "install: failed to chmod: $executable", e)
             }
@@ -95,24 +108,18 @@ fun install(context: Context): String {
         for (symlink in symlinks) {
             val (to, from) = symlink
             try {
-                Os.symlink(to, "$dataStagingPath/$from")
+                Os.symlink(to, "$stagingPath/$from")
             } catch (e: Exception) {
-                Log.e(TAG, "install: failed to create symlink: $to ← $dataStagingPath/$from", e)
+                Log.e(TAG, "install: failed to create symlink: $to ← $stagingPath/$from", e)
             }
         }
 
-        if (!File(dataStagingPath).renameTo(File(dataPath))) {
-            throw Exception("failed to rename staging")
+        if (!File(stagingPath).renameTo(targetFile)) {
+            throw Exception("failed to rename data-staging")
         }
     } finally {
         zip?.close()
     }
-
-    if (!File("$dataPath/tmp").mkdir()) {
-        throw Exception("failed to create tmp folder")
-    }
-
-    return envPath!!.trim()
 }
 
 fun deleteFolder(file: File) {

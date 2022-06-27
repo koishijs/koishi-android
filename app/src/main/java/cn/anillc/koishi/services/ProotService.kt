@@ -50,7 +50,7 @@ open class ProotService : Service(), Runnable {
         envPath = (application as KoishiApplication).envPath
     }
 
-    protected fun startProot(cmd: String) {
+    protected fun startProot(cmd: String, env: Map<String, String> = mapOf()) {
         if (process != null) return
         processLock.withLock {
             this.process =
@@ -63,7 +63,7 @@ open class ProotService : Service(), Runnable {
                     echo __STATUS__: $?
                     echo -e '\n[Process exited.]\n\n'
                 "
-            """.trimIndent(), packagePath, envPath
+            """.trimIndent(), packagePath, envPath, env
                 )
         }
         Thread(this).start()
@@ -82,8 +82,7 @@ open class ProotService : Service(), Runnable {
             val killProcess = startProotProcess(
                 """
                 ps -o pid,pgid | awk '{ if ($1 == "$pid") print "-" $2 }' | xargs kill -SIGINT
-            """.trimIndent(), packagePath, envPath
-            )
+            """.trimIndent(), packagePath, envPath)
             killProcess.waitFor()
             if (killProcess.exitValue() != 0) {
                 killProcess.inputStream.bufferedReader().use {

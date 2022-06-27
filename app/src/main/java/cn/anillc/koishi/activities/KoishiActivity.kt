@@ -2,7 +2,6 @@ package cn.anillc.koishi.activities
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
@@ -55,7 +54,8 @@ class KoishiActivity : Activity() {
     }
 
 
-    fun onStopKoishi(view: View) = koishiService.stopKoishi()
+    fun onStopKoishi(view: View) =
+        koishiService.stopKoishi()
 
     override fun onDestroy() {
         super.onDestroy()

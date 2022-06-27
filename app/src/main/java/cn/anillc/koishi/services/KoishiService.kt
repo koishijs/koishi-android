@@ -1,16 +1,12 @@
 package cn.anillc.koishi.services
 
-import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
-import android.os.Process
-
 class KoishiService : ProotService() {
     fun startKoishi() {
         startProot("""
             echo Starting koishi...
+            cd koishi-app
             yarn start
-        """.trimIndent())
+        """.trimIndent(), mapOf("KOI" to "KOI"))
     }
 
     fun stopKoishi() = stopProot()

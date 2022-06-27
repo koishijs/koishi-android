@@ -1,10 +1,15 @@
 package cn.anillc.koishi
 
-fun startProotProcess(cmd: String, packagePath: String, envPath: String): Process {
+fun startProotProcess(
+    cmd: String,
+    packagePath: String,
+    envPath: String,
+    env: Map<String, String> = mapOf(),
+): Process {
     val processBuilder = ProcessBuilder(
         "$packagePath/data/proot-static",
         "-r", "$packagePath/data${envPath}",
-        "-b", "$packagePath/data/tmp:/tmp",
+        "-b", "$packagePath/tmp:/tmp",
         "-b", "$packagePath/data/nix:/nix",
         "-b", "$packagePath/data:/data",
         "-b", "$packagePath/home:/home",
@@ -15,7 +20,8 @@ fun startProotProcess(cmd: String, packagePath: String, envPath: String): Proces
         "/bin/sh", "/bin/login", "-c", cmd
     ).redirectErrorStream(true)
     val environment = processBuilder.environment()
-    environment["PROOT_TMP_DIR"] = "$packagePath/data/tmp"
+    environment.putAll(env)
+    environment["PROOT_TMP_DIR"] = "$packagePath/tmp"
     return processBuilder.start()
 }
 
