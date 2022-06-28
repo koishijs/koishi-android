@@ -4,19 +4,25 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.install
+import cn.anillc.koishi.services.KoishiService
 
 class MainActivity : Activity() {
     companion object {
         private const val TAG = "MainActivity"
     }
 
+    private lateinit var koishiApplication: KoishiApplication
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val application = application as KoishiApplication
+        koishiApplication = application as KoishiApplication
+
+        val application = koishiApplication
         if (!application.isEnvPathInitialized) {
             setContentView(R.layout.loading)
             Thread {
@@ -36,8 +42,7 @@ class MainActivity : Activity() {
     fun onManageKoishi(view: View) =
         startActivity(Intent(this, KoishiActivity::class.java))
 
-    fun onStartWebView(view: View) {
-
-    }
+    fun onStartWebView(view: View) =
+        startActivity(Intent(this, ConsoleActivity::class.java))
 
 }

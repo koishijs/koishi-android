@@ -1,5 +1,11 @@
 package cn.anillc.koishi
 
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.Condition
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
 fun startProotProcess(
     cmd: String,
     packagePath: String,
@@ -31,3 +37,18 @@ fun Process.pid(): Int {
     pid.isAccessible = true
     return pid.get(this) as Int
 }
+
+fun String.removeVt100ControlChars(): String =
+    replace(Regex("\\e\\[[\\d;]*[^\\d;]"), "")
+
+fun condition(): Pair<Lock, Condition> {
+    val lock = ReentrantLock()
+    return lock to lock.newCondition()
+}
+
+fun Pair<Lock, Condition>.wait() = first.withLock(second::await)
+
+fun Pair<Lock, Condition>.wait(times: Long, unit: TimeUnit) =
+    first.withLock { second.await(times, unit) }
+
+fun Pair<Lock, Condition>.notifyAll() = first.withLock(second::signalAll)

@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
+import cn.anillc.koishi.removeVt100ControlChars
 import cn.anillc.koishi.services.KoishiService
 import cn.anillc.koishi.services.ProotService
 
@@ -34,7 +35,7 @@ class KoishiActivity : Activity() {
         this.binder = binder
         this.koishiService = binder.service as KoishiService
 
-        appendText(koishiService.log)
+        appendText(koishiService.log.get())
         setListener()
     }
 
@@ -70,7 +71,7 @@ class KoishiActivity : Activity() {
     private fun setListener() {
         binder.onInput = {
             runOnUiThread {
-                val text = it.replace(Regex("\\e\\[[\\d;]*[^\\d;]"), "")
+                val text = it.removeVt100ControlChars()
                 appendText("\n$text")
             }
         }

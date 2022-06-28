@@ -5,11 +5,11 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import cn.anillc.koishi.KoishiApplication
-import cn.anillc.koishi.pid
-import cn.anillc.koishi.startProotProcess
+import cn.anillc.koishi.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -34,15 +34,12 @@ open class ProotService : Service(), Runnable {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) = START_STICKY
 
-    var process: Process? = null
-        private set
-    var log = ""
-        private set
-    var stopping = false
+    val process = AtomicReference<Process>()
+    val log = AtomicReference("")
+    val stopping = AtomicBoolean()
     private var pid = AtomicInteger(PROCESS_NOT_INITIALIZED)
     private var status = AtomicInteger(PROCESS_NOT_INITIALIZED)
-    private val processLock = ReentrantLock()
-    private val statusCondition = processLock.newCondition()
+    private var condition = condition()
 
     override fun onCreate() {
         super.onCreate()
@@ -51,30 +48,27 @@ open class ProotService : Service(), Runnable {
     }
 
     protected fun startProot(cmd: String, env: Map<String, String> = mapOf()) {
-        if (process != null) return
-        processLock.withLock {
-            this.process =
-                startProotProcess(
-                    """
-                setsid sh -c "
-                    trap : SIGINT # to get status of process
-                    echo __PID__: $$
-                    $cmd
-                    echo __STATUS__: $?
-                    echo -e '\n[Process exited.]\n\n'
-                "
-            """.trimIndent(), packagePath, envPath, env
-                )
-        }
+        if (process.get() != null) return
+        this.process.set(
+            startProotProcess(
+                """
+                    setsid sh -c "
+                        trap : SIGINT # to get status of process
+                        echo __PID__: $$
+                        $cmd
+                        echo __STATUS__: $?
+                        echo -e '\n[Process exited.]\n\n'
+                    "
+                """.trimIndent(), packagePath, envPath, env
+            )
+        )
         Thread(this).start()
     }
 
     protected fun stopProot() {
-        processLock.lock()
-        if (stopping) return
-        val process = this.process ?: return
-        stopping = true
-        processLock.unlock()
+        if (stopping.get()) return
+        val process = this.process.get() ?: return
+        stopping.set(true)
         val pid = this.pid.get()
         if (pid == PROCESS_NOT_INITIALIZED) {
             android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
@@ -82,7 +76,8 @@ open class ProotService : Service(), Runnable {
             val killProcess = startProotProcess(
                 """
                 ps -o pid,pgid | awk '{ if ($1 == "$pid") print "-" $2 }' | xargs kill -SIGINT
-            """.trimIndent(), packagePath, envPath)
+            """.trimIndent(), packagePath, envPath
+            )
             killProcess.waitFor()
             if (killProcess.exitValue() != 0) {
                 killProcess.inputStream.bufferedReader().use {
@@ -91,20 +86,16 @@ open class ProotService : Service(), Runnable {
             }
         }
         Thread {
-            processLock.withLock {
-                if (!statusCondition.await(10, TimeUnit.SECONDS)) {
+                if (!condition.wait(10, TimeUnit.SECONDS)) {
                     android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
                     status.set(PROCESS_FORCE_KILLED)
                 }
-            }
         }.start()
     }
 
     override fun run() {
         try {
-            processLock.lock()
-            val tProcess = process ?: return
-            processLock.unlock()
+            val tProcess = process.get() ?: return
             val pidRegex = Regex("^__PID__: (\\d+)$")
             val statusRegex = Regex("^__STATUS__: (\\d+)$")
             val reader = tProcess.inputStream.bufferedReader()
@@ -120,26 +111,31 @@ open class ProotService : Service(), Runnable {
                     val statusMatch = statusRegex.matchEntire(i)
                     if (statusMatch != null) {
                         status.set(statusMatch.groupValues[1].toInt())
-                        processLock.withLock(statusCondition::signalAll)
+                        condition.notifyAll()
                         continue
                     }
                 }
-                log += "\n$i"
-                val onInput = binder.onInput ?: continue
+                log.set("${log.get()}\n$i")
                 onInput(i)
+                val onBinderInput = binder.onInput ?: continue
+                onBinderInput(i)
             }
             tProcess.waitFor()
-            val onExit = binder.onExit ?: return
             onExit(status.get())
+            val onBinderExit = binder.onExit ?: return
+            onBinderExit(status.get())
         } catch (e: Exception) {
             throw e
         } finally {
-            this.process = null
+            process.set(null)
             binder.onInput = null
             binder.onExit = null
             pid.set(PROCESS_NOT_INITIALIZED)
             status.set(PROCESS_NOT_INITIALIZED)
-            stopping = false
+            stopping.set(false)
         }
     }
+
+    protected open fun onInput(line: String) {}
+    protected open fun onExit(code: Int) {}
 }
