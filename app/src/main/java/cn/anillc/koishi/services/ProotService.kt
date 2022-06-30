@@ -52,14 +52,14 @@ open class ProotService : Service(), Runnable {
         this.process.set(
             startProotProcess(
                 """
-                    setsid sh -c "
-                        trap : SIGINT # to get status of process
-                        echo __PID__: $$
-                        $cmd
-                        echo __STATUS__: $?
-                        echo -e '\n[Process exited.]\n\n'
-                    "
-                """.trimIndent(), packagePath, envPath, env
+setsid sh <<PROOT_EOF
+trap : SIGINT # to get status of process
+echo __PID__: \$$
+$cmd
+echo __STATUS__: \$?
+echo -e '\n[Process exited.]\n\n'
+PROOT_EOF
+""", packagePath, envPath, env
             )
         )
         Thread(this).start()

@@ -26,6 +26,7 @@ class MainActivity : Activity() {
         if (!application.isEnvPathInitialized) {
             setContentView(R.layout.loading)
             Thread {
+                // TODO: exception
                 application.envPath = install(this)
                 application.onInitialized()
                 runOnUiThread(::activityMain)
