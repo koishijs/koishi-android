@@ -25,7 +25,7 @@
         apps.copy = mkApp {
             drv = pkgs.writeScriptBin "copy" ''
                 FOLDER=../app/src/main/assets/bootstrap
-                rm -rf $FOLDER && mkdir -p $FOLDER
+                mkdir -p $FOLDER
                 cp -f ${self.packages.${system}.bootstrap}/* $FOLDER
             '';
         };

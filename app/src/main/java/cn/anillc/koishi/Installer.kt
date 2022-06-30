@@ -45,6 +45,10 @@ fun copyData(context: Context): String {
         throw Exception("failed to create tmp folder")
     }
 
+    if (!File("$packageData/shm").mkdir()) {
+        throw Exception("failed to create shm folder")
+    }
+
     return envPath!!.trim()
 }
 

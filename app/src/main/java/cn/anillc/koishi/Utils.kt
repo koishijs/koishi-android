@@ -16,6 +16,7 @@ fun startProotProcess(
         "$packagePath/data/proot-static",
         "-r", "$packagePath/data${envPath}",
         "-b", "$packagePath/tmp:/tmp",
+        "-b", "$packagePath/shm:/dev/shm",
         "-b", "$packagePath/data/nix:/nix",
         "-b", "$packagePath/data:/data",
         "-b", "$packagePath/home:/home",

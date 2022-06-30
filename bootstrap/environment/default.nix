@@ -1,23 +1,25 @@
-{ pkgs, buildEnv, callPackage, lib }:
+{ pkgs, buildEnv, callPackage, lib, inputs }:
 
 with builtins;
 with lib;
 
 let
-    aarch64-pkgs = pkgs.pkgsCross.aarch64-multiplatform;
+    aarch64-pkgs = import inputs.nixpkgs { system = "aarch64-linux"; };
     profile = callPackage ./profile.nix {};
     login = callPackage ./login.nix {};
     env = callPackage ./env.nix { inherit (aarch64-pkgs) busybox; };
     resolvconf = callPackage ./resolvconf.nix {};
+    fonts = callPackage ./fonts.nix {};
 in buildEnv {
     name = "koishi-env";
     paths = with aarch64-pkgs; [
         profile login env
         resolvconf cacert
         busybox
-        nodejs_latest
+        chromium fonts
+        nodejs
         (yarn.overrideAttrs (x: {
-            buildInputs = [ nodejs_latest ];
+            buildInputs = [ nodejs ];
         }))
     ];
 }
