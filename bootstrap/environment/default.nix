@@ -10,11 +10,12 @@ let
     env = callPackage ./env.nix { inherit (aarch64-pkgs) busybox; };
     resolvconf = callPackage ./resolvconf.nix {};
     fonts = callPackage ./fonts.nix {};
+    certs = callPackage ./certs.nix {};
 in buildEnv {
     name = "koishi-env";
     paths = with aarch64-pkgs; [
         profile login env
-        resolvconf cacert
+        resolvconf certs
         busybox
         chromium fonts
         nodejs
