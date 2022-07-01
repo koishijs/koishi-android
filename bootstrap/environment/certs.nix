@@ -1,5 +1,3 @@
-# chromium requires /etc/static/ssl to verify ssl certs
-
 { cacert, runCommand }:
 
 runCommand "certs" {} ''
