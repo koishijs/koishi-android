@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.install
-import cn.anillc.koishi.services.KoishiService
 
 class MainActivity : Activity() {
     companion object {
@@ -40,10 +38,13 @@ class MainActivity : Activity() {
         setContentView(R.layout.main)
     }
 
-    fun onManageKoishi(view: View) =
+    fun onManageKoishiClick(view: View) =
         startActivity(Intent(this, KoishiActivity::class.java))
 
-    fun onStartWebView(view: View) =
+    fun onStartWebViewClick(view: View) =
         startActivity(Intent(this, ConsoleActivity::class.java))
+
+    fun onSettingsClick(view: View) =
+        startActivity(Intent(this, Settings::class.java))
 
 }

@@ -29,6 +29,7 @@
 
         <activity android:name=".activities.KoishiActivity" />
         <activity android:name=".activities.ConsoleActivity" />
+        <activity android:name=".activities.Settings" />
 
         <service android:name=".services.KoishiService" />
 

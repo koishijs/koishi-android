@@ -7,4 +7,6 @@
     <string name="stop_koishi">停止 koishi</string>
     <string name="failed_to_get_service">获取服务失败，请尝试强制关闭程序后重新启动</string>
     <string name="koishi_is_not_started">koishi 尚未启动或启动未完成</string>
+    <string name="dns_settings">DNS 设置</string>
+    <string name="edit_dns_settings">点击修改 DNS 设置</string>
 </resources>

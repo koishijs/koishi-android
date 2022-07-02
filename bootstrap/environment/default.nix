@@ -15,7 +15,7 @@ in buildEnv {
     name = "koishi-env";
     paths = with aarch64-pkgs; [
         profile login env
-        resolvconf certs
+        certs
         busybox
         chromium fonts
         nodejs

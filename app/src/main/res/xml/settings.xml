@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="true">
+
+    <EditTextPreference
+        android:key="dns"
+        android:summary="@string/edit_dns_settings"
+        android:title="@string/dns_settings"
+        android:icon="@drawable/dns"/>
+
+    <Preference
+        android:key="about"
+        android:title="关于"
+        android:icon="@drawable/about"/>
+
+</PreferenceScreen>

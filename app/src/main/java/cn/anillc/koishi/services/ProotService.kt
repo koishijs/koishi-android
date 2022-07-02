@@ -2,16 +2,16 @@ package cn.anillc.koishi.services
 
 import android.app.Service
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Binder
 import android.os.IBinder
+import android.support.v7.preference.PreferenceManager
 import android.util.Log
 import cn.anillc.koishi.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 open class ProotService : Service(), Runnable {
     companion object {
@@ -28,6 +28,7 @@ open class ProotService : Service(), Runnable {
 
     private lateinit var packagePath: String
     private lateinit var envPath: String
+    private lateinit var preferences: SharedPreferences
 
     private val binder by lazy { LocalBinder(this, null, null) }
     override fun onBind(intent: Intent?): IBinder = binder
@@ -45,10 +46,15 @@ open class ProotService : Service(), Runnable {
         super.onCreate()
         packagePath = filesDir.path
         envPath = (application as KoishiApplication).envPath
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     protected fun startProot(cmd: String, env: Map<String, String> = mapOf()) {
         if (process.get() != null) return
+        val prootEnv = mutableMapOf(
+            "KOISHI_DNS" to preferences.getString("KOISHI_DNS", DEFAULT_DNS)!!
+        )
+        prootEnv.putAll(env)
         this.process.set(
             startProotProcess(
                 """
@@ -59,7 +65,7 @@ $cmd
 echo __STATUS__: \$?
 echo -e '\n[Process exited.]\n\n'
 PROOT_EOF
-""", packagePath, envPath, env
+""", packagePath, envPath, prootEnv
             )
         )
         Thread(this).start()

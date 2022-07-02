@@ -1,5 +1,6 @@
 package cn.anillc.koishi.services
 
+import cn.anillc.koishi.BuildConfig
 import cn.anillc.koishi.removeVt100ControlChars
 import java.util.concurrent.atomic.AtomicReference
 
@@ -30,7 +31,9 @@ class KoishiService : ProotService() {
             # /home/yarn.js start
             # yarn start
             ./node_modules/.bin/koishi start
-        """.trimIndent(), mapOf("KOI" to "KOI"))
+        """.trimIndent(), mapOf(
+            "KOI" to "android-arm64-v${BuildConfig.VERSION_NAME}",
+        ))
     }
 
     fun stopKoishi() = stopProot()
