@@ -10,6 +10,18 @@
         android:icon="@drawable/dns"/>
 
     <Preference
+        android:key="export"
+        android:title="导出"
+        android:summary="@string/backup_koishi"
+        android:icon="@drawable/database_export"/>
+
+    <Preference
+        android:key="import"
+        android:title="导入"
+        android:summary="@string/import_koishi"
+        android:icon="@drawable/database_import"/>
+
+    <Preference
         android:key="about"
         android:title="关于"
         android:icon="@drawable/about"/>

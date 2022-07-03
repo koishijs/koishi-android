@@ -136,13 +136,3 @@ fun unpackZip(fileName: String, target: String, context: Context) {
         zip?.close()
     }
 }
-
-fun deleteFolder(file: File) {
-    if (file.canonicalPath == file.absolutePath && file.isDirectory) {
-        file.listFiles()?.forEach(::deleteFolder)
-    }
-
-    if (!file.delete()) {
-        throw Exception("failed to delete $file")
-    }
-}

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Koishi</string>
-    <string name="loading">初始化中，请稍候…</string>
+    <string name="koishi_loading">初始化中，请稍候…</string>
     <string name="manage_koishi">管理 koishi</string>
     <string name="start_webview">启动 console</string>
     <string name="start_koishi">启动 koishi</string>
@@ -9,4 +9,12 @@
     <string name="koishi_is_not_started">koishi 尚未启动或启动未完成</string>
     <string name="dns_settings">DNS 设置</string>
     <string name="edit_dns_settings">点击修改 DNS 设置</string>
+    <string name="backup_koishi">导出 Koishi 备份</string>
+    <string name="import_koishi">从文件中导入 Koishi</string>
+    <string name="import_koishi_alert">警告：此操作将会覆盖您已有的 Koishi 实例，请确认已备份后再操作</string>
+    <string name="import_file_failed">导入文件失败</string>
+    <string name="import_file_succeed">导入文件成功</string>
+    <string name="failed_to_delete_koishi">删除旧 Koishi 实例失败，请尝试重新导入</string>
+    <string name="import_loading">导入中，请稍候…</string>
+    <string name="invalid_file">导入的文件无效，请导入正确的 Koishi 实例</string>
 </resources>
