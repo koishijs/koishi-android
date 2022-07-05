@@ -31,11 +31,6 @@ dependencyResolutionManagement {
             // Deprecated Android Support
             library("android-support-appcompat", "com.android.support", "appcompat-v7").version("28.0.0")
             library("android-support-preference", "com.android.support", "preference-v7").version("28.0.0")
-
-            // Test
-            library("junit", "junit", "junit").version("4.13.2")
-            library("android-test-runner", "com.android.support.test", "runner").version("1.0.2")
-            library("android-test-espresso", "com.android.support.test.espresso", "espresso-core").version("3.0.2")
         }
     }
 }

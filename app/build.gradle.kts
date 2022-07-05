@@ -12,8 +12,6 @@ android {
         targetSdk = 28
         versionCode = 1
         versionName = "0.0.1"
-
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -59,8 +57,4 @@ dependencies {
 
     implementation(libs.android.support.appcompat)
     implementation(libs.android.support.preference)
-
-    implementation(libs.junit)
-    androidTestImplementation(libs.android.test.runner)
-    androidTestImplementation(libs.android.test.espresso)
 }
