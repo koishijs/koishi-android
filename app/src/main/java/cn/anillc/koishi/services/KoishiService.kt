@@ -36,7 +36,7 @@ class KoishiService : ProotService() {
             # yarn start
             ./node_modules/.bin/koishi start
         """.trimIndent(), mapOf(
-            "KOI" to "android-arm64-v${BuildConfig.VERSION_NAME}",
+            "KOISHI_AGENT" to "Koishi Android/${BuildConfig.VERSION_NAME}",
         ))
     }
 
