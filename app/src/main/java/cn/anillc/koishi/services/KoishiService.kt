@@ -32,9 +32,7 @@ class KoishiService : ProotService() {
             fi
             echo Starting koishi...
             cd koishi-app
-            # /home/yarn.js start
-            # yarn start
-            ./node_modules/.bin/koishi start
+            /home/yarn.js koishi start
         """.trimIndent(), mapOf(
             "KOISHI_AGENT" to "Koishi Android/${BuildConfig.VERSION_NAME}",
         ))

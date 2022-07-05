@@ -19,8 +19,5 @@ in buildEnv {
         busybox zip
         chromium fonts
         nodejs
-        (yarn.overrideAttrs (x: {
-            buildInputs = [ nodejs ];
-        }))
     ];
 }
