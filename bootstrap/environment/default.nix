@@ -16,7 +16,7 @@ in buildEnv {
     paths = with aarch64-pkgs; [
         profile login env
         certs
-        busybox
+        busybox zip
         chromium fonts
         nodejs
         (yarn.overrideAttrs (x: {

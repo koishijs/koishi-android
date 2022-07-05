@@ -17,4 +17,9 @@
     <string name="failed_to_delete_koishi">删除旧 Koishi 实例失败，请尝试重新导入</string>
     <string name="import_loading">导入中，请稍候…</string>
     <string name="invalid_file">导入的文件无效，请导入正确的 Koishi 实例</string>
+    <string name="permission_denied">权限检查失败，请在设置中开启 Koishi Android 的文件权限</string>
+    <string name="export_loading">导出中，请稍候…</string>
+    <string name="koishi_not_initialized">Koishi 未初始化</string>
+    <string name="export_file_failed">导出文件失败</string>
+    <string name="export_file_succeed">导出文件已保存至 %s</string>
 </resources>

@@ -47,8 +47,7 @@ fun startProotProcessWait(
     env: Map<String, String> = mapOf(),
 ): String? {
     val process = startProotProcess(cmd, packagePath, envPath, env)
-    process.waitFor()
-    if (process.exitValue() != 0) return null
+    if (process.waitFor() != 0) return null
     return process.inputStream.bufferedReader().use(BufferedReader::readText)
 }
 

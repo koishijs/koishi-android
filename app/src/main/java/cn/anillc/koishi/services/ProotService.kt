@@ -81,8 +81,8 @@ PROOT_EOF
         } else {
             val killProcess = startProotProcess(
                 """
-                ps -o pid,pgid | awk '{ if ($1 == "$pid") print "-" $2 }' | xargs kill -SIGINT
-            """.trimIndent(), packagePath, envPath
+                    ps -o pid,pgid | awk '{ if ($1 == "$pid") print "-" $2 }' | xargs kill -SIGINT
+                """.trimIndent(), packagePath, envPath
             )
             killProcess.waitFor()
             if (killProcess.exitValue() != 0) {
@@ -92,10 +92,10 @@ PROOT_EOF
             }
         }
         Thread {
-                if (!condition.wait(10, TimeUnit.SECONDS)) {
-                    android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
-                    status.set(PROCESS_FORCE_KILLED)
-                }
+            if (!condition.wait(10, TimeUnit.SECONDS)) {
+                android.os.Process.sendSignal(process.pid(), android.os.Process.SIGNAL_KILL)
+                status.set(PROCESS_FORCE_KILLED)
+            }
         }.start()
     }
 

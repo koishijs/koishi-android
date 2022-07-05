@@ -1,16 +1,24 @@
 package cn.anillc.koishi.activities
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.FragmentActivity
+import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
+import android.text.format.DateFormat
 import android.util.Log
 import android.widget.Toast
 import cn.anillc.koishi.*
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.*
 
 
 class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
@@ -50,7 +58,55 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
     }
 
     private fun exportKoishi() {
+        val read = checkSelfPermission(this, READ_EXTERNAL_STORAGE)
+        val write = checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
+        if (read != PERMISSION_GRANTED || write != PERMISSION_GRANTED) {
+            Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()
+            return
+        }
+        val packagePath = filesDir.path
+        val dismiss = loadingAlert(this, R.string.export_loading)
+        val koishiApp = File("$packagePath/home/koishi-app")
+        val koishiExportZip = File("$packagePath/home/koishi-export.zip")
+        val external = File(Environment.getExternalStorageDirectory(), "koishi")
+        Thread {
+            try {
+                if (!koishiApp.exists()) {
+                    showToast(R.string.koishi_not_initialized)
+                    return@Thread
+                }
 
+                val exitValue = startProotProcess(
+                    """
+                        cd koishi-app
+                        zip -9qry ../koishi-export.zip ./.
+                    """.trimIndent(), packagePath, koishiApplication.envPath
+                ).waitFor()
+
+                if (exitValue != 0) throw Exception()
+                if (!external.exists() && !external.mkdirs()) throw Exception()
+
+                val today = Date()
+                val date = DateFormat.format("yyyy-MM-dd", today)
+                val backups = external.list()
+                val backupRegex = Regex("^koishi-$date-(\\d+)\\.zip\$")
+                val last = backups.mapNotNull(backupRegex::matchEntire)
+                    .map { it.groupValues[1].toInt() }.sorted().reversed().getOrNull(0)
+                val num = (if (last == null) 1 else last + 1)
+                    .toString().padStart(2, '0')
+                val saveFile = File(external, "koishi-$date-$num.zip")
+                FileInputStream(koishiExportZip).use {
+                    FileOutputStream(saveFile).use(it::copyTo)
+                }
+                koishiExportZip.delete()
+                showToast(getString(R.string.export_file_succeed, saveFile.absolutePath))
+            } catch (e: Exception) {
+                showToast(R.string.export_file_failed)
+                Log.e(TAG, "exportKoishi: failed to export koishi", e)
+            } finally {
+                runOnUiThread(dismiss)
+            }
+        }.start()
     }
 
     private val pickerCode = 514
@@ -73,41 +129,47 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
         val koishiZip = File("$packagePath/home/koishi.zip")
         Thread {
             try {
-                val input = contentResolver.openInputStream(data!!.data!!)
-                input.use { FileOutputStream(koishiZip).use(it::copyTo) }
+                try {
+                    val input = contentResolver.openInputStream(data!!.data!!)
+                    input.use { FileOutputStream(koishiZip).use(it::copyTo) }
+                } catch (e: Exception) {
+                    showToast(R.string.import_file_failed)
+                    throw e
+                }
+
+                val zipList = startProotProcessWait(
+                    "unzip -l koishi.zip | grep koishi.yml",
+                    packagePath, koishiApplication.envPath
+                )
+
+                if (zipList == null || !zipList.contains("koishi.yml")) {
+                    showToast(R.string.invalid_file)
+                    koishiZip.delete()
+                    return@Thread
+                }
+
+                try {
+                    val oldKoishi = File("${filesDir}/home/koishi-app")
+                    if (oldKoishi.exists()) deleteFolder(oldKoishi)
+                } catch (e: Exception) {
+                    showToast(R.string.failed_to_delete_koishi)
+                    throw e
+                }
+
+                showToast(R.string.import_file_succeed)
             } catch (e: Exception) {
-                showToast(R.string.import_file_failed)
-                Log.e(TAG, "onActivityResult: failed to import file", e)
-                return@Thread
-            }
-
-            val zipList = startProotProcessWait(
-                "unzip -l koishi.zip | grep koishi.yml",
-                packagePath, koishiApplication.envPath
-            )
-
-            if (zipList == null || !zipList.contains("koishi.yml")) {
-                showToast(R.string.invalid_file)
+                Log.e(TAG, "onActivityResult: failed to import koishi", e)
+            } finally {
                 runOnUiThread(dismiss)
-                koishiZip.delete()
-                return@Thread
             }
-
-            try {
-                val oldKoishi = File("${filesDir}/home/koishi-app")
-                if (oldKoishi.exists()) deleteFolder(oldKoishi)
-            } catch (e: Exception) {
-                showToast(R.string.failed_to_delete_koishi)
-                Log.e(TAG, "onActivityResult: failed to delete koishi-app", e)
-                return@Thread
-            }
-
-            showToast(R.string.import_file_succeed)
-            runOnUiThread(dismiss)
         }.start()
     }
 
     private fun showToast(resId: Int) = runOnUiThread {
         Toast.makeText(this, resId, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showToast(str: String) = runOnUiThread {
+        Toast.makeText(this, str, Toast.LENGTH_LONG).show()
     }
 }
