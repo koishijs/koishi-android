@@ -22,4 +22,5 @@
     <string name="koishi_not_initialized">Koishi 未初始化</string>
     <string name="export_file_failed">导出文件失败</string>
     <string name="export_file_succeed">导出文件已保存至 %s</string>
+    <string name="failed_to_initialize">初始化失败: %s</string>
 </resources>

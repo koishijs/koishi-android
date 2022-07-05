@@ -11,6 +11,7 @@ import cn.anillc.koishi.R
 import cn.anillc.koishi.removeVt100ControlChars
 import cn.anillc.koishi.services.KoishiService
 import cn.anillc.koishi.services.ProotService
+import cn.anillc.koishi.showToast
 
 class KoishiActivity : Activity() {
 
@@ -42,7 +43,7 @@ class KoishiActivity : Activity() {
     private fun getBinder(): ProotService.LocalBinder? {
         val binder = koishiApplication.serviceConnection.koishiBinder
         if (binder == null) {
-            Toast.makeText(this, R.string.failed_to_get_service, Toast.LENGTH_LONG).show()
+            showToast(R.string.failed_to_get_service)
             finish()
             return null
         }

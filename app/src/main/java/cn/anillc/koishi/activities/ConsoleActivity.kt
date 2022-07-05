@@ -10,6 +10,7 @@ import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.services.KoishiService
 import cn.anillc.koishi.services.ProotService
+import cn.anillc.koishi.showToast
 
 class ConsoleActivity : Activity() {
 
@@ -31,7 +32,7 @@ class ConsoleActivity : Activity() {
         val service = binder?.service as KoishiService?
         val link = service?.link
         if (binder == null || service!!.process.get() == null || link!!.get() == null) {
-            Toast.makeText(this, R.string.koishi_is_not_started, Toast.LENGTH_LONG).show()
+            showToast(R.string.koishi_is_not_started)
             finish()
             return
         }

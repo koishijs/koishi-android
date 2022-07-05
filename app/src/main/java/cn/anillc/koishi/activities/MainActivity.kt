@@ -8,10 +8,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.view.View
-import cn.anillc.koishi.KoishiApplication
-import cn.anillc.koishi.R
-import cn.anillc.koishi.acceptAlert
-import cn.anillc.koishi.install
+import cn.anillc.koishi.*
 
 class MainActivity : Activity() {
     companion object {
@@ -29,10 +26,16 @@ class MainActivity : Activity() {
         if (!application.isEnvPathInitialized) {
             setContentView(R.layout.loading)
             Thread {
-                // TODO: exception
-                application.envPath = install(this)
-                application.onInitialized()
-                runOnUiThread(::activityMain)
+                try {
+                    application.envPath = install(this)
+                    application.onInitialized()
+                    runOnUiThread(::activityMain)
+                } catch (e: Exception) {
+                    runOnUiThread {
+                        showToast(R.string.failed_to_initialize, e.toString())
+                        finish()
+                    }
+                }
             }.start()
         } else {
             activityMain()

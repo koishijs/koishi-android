@@ -1,11 +1,13 @@
 package cn.anillc.koishi
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.TextView
+import android.widget.Toast
 import java.io.BufferedReader
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -51,16 +53,6 @@ fun startProotProcessWait(
     return process.inputStream.bufferedReader().use(BufferedReader::readText)
 }
 
-fun deleteFolder(file: File) {
-    if (file.canonicalPath == file.absolutePath && file.isDirectory) {
-        file.listFiles()?.forEach(::deleteFolder)
-    }
-
-    if (!file.delete()) {
-        throw Exception("failed to delete $file")
-    }
-}
-
 fun acceptAlert(context: Context, message: Int, callback: DialogInterface.OnClickListener) =
     AlertDialog.Builder(context)
         .setMessage(message)
@@ -101,3 +93,24 @@ fun Pair<Lock, Condition>.wait(times: Long, unit: TimeUnit) =
     first.withLock { second.await(times, unit) }
 
 fun Pair<Lock, Condition>.notifyAll() = first.withLock(second::signalAll)
+
+// File.delete fails on EMUI
+fun File.rm(): Boolean {
+    return Runtime.getRuntime().exec("rm -rf $absolutePath").waitFor() == 0
+}
+
+fun Activity.showToastOnUiThread(text: String) = runOnUiThread {
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+}
+
+fun Activity.showToastOnUiThread(resId: Int, vararg args: String) = runOnUiThread {
+    Toast.makeText(this, getString(resId, args), Toast.LENGTH_LONG).show()
+}
+
+fun Context.showToast(text: String) {
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+}
+
+fun Context.showToast(resId: Int, vararg args: String) {
+    Toast.makeText(this, getString(resId, args), Toast.LENGTH_LONG).show()
+}
