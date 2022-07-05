@@ -131,7 +131,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
             try {
                 try {
                     val input = contentResolver.openInputStream(data!!.data!!)
-                    input.use { FileOutputStream(koishiZip).use(it::copyTo) }
+                    input!!.use { FileOutputStream(koishiZip).use(it::copyTo) }
                 } catch (e: Exception) {
                     showToastOnUiThread(R.string.import_file_failed)
                     throw e
