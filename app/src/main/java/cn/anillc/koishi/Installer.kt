@@ -36,6 +36,16 @@ fun install(context: Context): String {
 fun copyData(context: Context): String {
     val packageData = context.filesDir.path
 
+    unpackZip("bootstrap/bootstrap.zip", "data", context)
+
+    if (!File("$packageData/tmp").mkdir()) {
+        throw Exception("failed to create tmp folder")
+    }
+
+    if (!File("$packageData/shm").mkdir()) {
+        throw Exception("failed to create shm folder")
+    }
+
     val envPath: String?
     var envPathFrom: Reader? = null
     var envPathTo: Writer? = null
@@ -48,16 +58,6 @@ fun copyData(context: Context): String {
     } finally {
         envPathFrom?.close()
         envPathTo?.close()
-    }
-
-    unpackZip("bootstrap/bootstrap.zip", "data", context)
-
-    if (!File("$packageData/tmp").mkdir()) {
-        throw Exception("failed to create tmp folder")
-    }
-
-    if (!File("$packageData/shm").mkdir()) {
-        throw Exception("failed to create shm folder")
     }
 
     return envPath!!.trim()
