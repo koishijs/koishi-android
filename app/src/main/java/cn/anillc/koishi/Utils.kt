@@ -51,14 +51,9 @@ fun startProotProcessWait(
     return process.inputStream.bufferedReader().use(BufferedReader::readText)
 }
 
-fun deleteFolder(file: File) {
-    if (file.canonicalPath == file.absolutePath && file.isDirectory) {
-        file.listFiles()?.forEach(::deleteFolder)
-    }
-
-    if (!file.delete()) {
-        throw Exception("failed to delete $file")
-    }
+// File.delete fails on EMUI
+fun File.rm(): Boolean {
+    return Runtime.getRuntime().exec("rm -rf $absolutePath").waitFor() == 0
 }
 
 fun acceptAlert(context: Context, message: Int, callback: DialogInterface.OnClickListener) =

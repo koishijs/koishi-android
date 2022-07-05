@@ -98,7 +98,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
                 FileInputStream(koishiExportZip).use {
                     FileOutputStream(saveFile).use(it::copyTo)
                 }
-                koishiExportZip.delete()
+                koishiExportZip.rm()
                 showToast(getString(R.string.export_file_succeed, saveFile.absolutePath))
             } catch (e: Exception) {
                 showToast(R.string.export_file_failed)
@@ -144,13 +144,15 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
 
                 if (zipList == null || !zipList.contains("koishi.yml")) {
                     showToast(R.string.invalid_file)
-                    koishiZip.delete()
+                    koishiZip.rm()
                     return@Thread
                 }
 
                 try {
-                    val oldKoishi = File("${filesDir}/home/koishi-app")
-                    if (oldKoishi.exists()) deleteFolder(oldKoishi)
+                    val oldKoishi = File("${packagePath}/home/koishi-app")
+                    if (oldKoishi.exists() && !oldKoishi.rm()) {
+                        throw Exception("failed to delete koishi")
+                    }
                 } catch (e: Exception) {
                     showToast(R.string.failed_to_delete_koishi)
                     throw e
