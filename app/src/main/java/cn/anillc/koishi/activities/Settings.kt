@@ -112,6 +112,10 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
     private val pickerCode = 514
 
     private fun importKoishi() = acceptAlert(this, R.string.import_koishi_alert) { _, _ ->
+        if (koishiApplication.serviceConnection.koishiBinder?.service?.process?.get() != null) {
+            showToast(R.string.stop_before_import)
+            return@acceptAlert
+        }
         startActivityForResult(
             Intent.createChooser(Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "application/zip"
