@@ -61,7 +61,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
         val read = checkSelfPermission(this, READ_EXTERNAL_STORAGE)
         val write = checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
         if (read != PERMISSION_GRANTED || write != PERMISSION_GRANTED) {
-            Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()
+            showToast(R.string.permission_denied)
             return
         }
         val packagePath = filesDir.path
@@ -72,7 +72,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
         Thread {
             try {
                 if (!koishiApp.exists()) {
-                    showToast(R.string.koishi_not_initialized)
+                    showToastOnUiThread(R.string.koishi_not_initialized)
                     return@Thread
                 }
 
@@ -99,9 +99,9 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
                     FileOutputStream(saveFile).use(it::copyTo)
                 }
                 koishiExportZip.rm()
-                showToast(getString(R.string.export_file_succeed, saveFile.absolutePath))
+                showToastOnUiThread(getString(R.string.export_file_succeed, saveFile.absolutePath))
             } catch (e: Exception) {
-                showToast(R.string.export_file_failed)
+                showToastOnUiThread(R.string.export_file_failed)
                 Log.e(TAG, "exportKoishi: failed to export koishi", e)
             } finally {
                 runOnUiThread(dismiss)
@@ -133,7 +133,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
                     val input = contentResolver.openInputStream(data!!.data!!)
                     input.use { FileOutputStream(koishiZip).use(it::copyTo) }
                 } catch (e: Exception) {
-                    showToast(R.string.import_file_failed)
+                    showToastOnUiThread(R.string.import_file_failed)
                     throw e
                 }
 
@@ -143,7 +143,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
                 )
 
                 if (zipList == null || !zipList.contains("koishi.yml")) {
-                    showToast(R.string.invalid_file)
+                    showToastOnUiThread(R.string.invalid_file)
                     koishiZip.rm()
                     return@Thread
                 }
@@ -154,24 +154,16 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
                         throw Exception("failed to delete koishi")
                     }
                 } catch (e: Exception) {
-                    showToast(R.string.failed_to_delete_koishi)
+                    showToastOnUiThread(R.string.failed_to_delete_koishi)
                     throw e
                 }
 
-                showToast(R.string.import_file_succeed)
+                showToastOnUiThread(R.string.import_file_succeed)
             } catch (e: Exception) {
                 Log.e(TAG, "onActivityResult: failed to import koishi", e)
             } finally {
                 runOnUiThread(dismiss)
             }
         }.start()
-    }
-
-    private fun showToast(resId: Int) = runOnUiThread {
-        Toast.makeText(this, resId, Toast.LENGTH_LONG).show()
-    }
-
-    private fun showToast(str: String) = runOnUiThread {
-        Toast.makeText(this, str, Toast.LENGTH_LONG).show()
     }
 }
