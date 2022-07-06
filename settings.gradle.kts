@@ -35,14 +35,11 @@ dependencyResolutionManagement {
 
             // Jetpack Compose
             library("androidx-compose-activity", "androidx.activity", "activity-compose").version("1.4.0")
-            library("androidx-compose-material", "androidx.compose.material", "material").version("1.1.1")
+            library("androidx-compose-material", "androidx.compose.material3", "material3").version("1.0.0-alpha14")
             library("androidx-compose-animation", "androidx.compose.animation", "animation").version("1.1.1")
             library("androidx-compose-ui", "androidx.compose.ui", "ui-tooling").version("1.1.1")
             library("androidx-compose-lifecycle", "androidx.lifecycle", "lifecycle-viewmodel-compose").version("2.4.1")
             library("androidx-compose-navigation", "androidx.navigation", "navigation-compose").version("2.5.0")
-
-            // Material Design
-            library("google-android-material", "com.google.android.material", "material").version("1.4.0")
         }
     }
 }
