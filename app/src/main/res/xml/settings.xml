@@ -4,7 +4,7 @@
     android:persistent="true">
 
     <EditTextPreference
-        android:key="dns"
+        android:key="KOISHI_DNS"
         android:summary="@string/edit_dns_settings"
         android:title="@string/dns_settings"
         android:icon="@drawable/dns"/>
