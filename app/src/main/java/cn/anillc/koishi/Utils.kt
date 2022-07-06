@@ -1,10 +1,10 @@
 package cn.anillc.koishi
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.TextView
 import android.widget.Toast
@@ -99,11 +99,11 @@ fun File.rm(): Boolean {
     return Runtime.getRuntime().exec("rm -rf $absolutePath").waitFor() == 0
 }
 
-fun Activity.showToastOnUiThread(text: String) = runOnUiThread {
+fun AppCompatActivity.showToastOnUiThread(text: String) = runOnUiThread {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }
 
-fun Activity.showToastOnUiThread(resId: Int, vararg args: String) = runOnUiThread {
+fun AppCompatActivity.showToastOnUiThread(resId: Int, vararg args: String) = runOnUiThread {
     Toast.makeText(this, getString(resId, args), Toast.LENGTH_LONG).show()
 }
 

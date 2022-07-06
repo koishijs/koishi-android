@@ -2,15 +2,15 @@ package cn.anillc.koishi.activities
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
-import android.support.v4.content.ContextCompat.checkSelfPermission
+import androidx.core.content.ContextCompat.checkSelfPermission
 import android.view.View
 import cn.anillc.koishi.*
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }

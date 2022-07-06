@@ -2,18 +2,16 @@ package cn.anillc.koishi.activities
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat.checkSelfPermission
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import android.text.format.DateFormat
 import android.util.Log
-import android.widget.Toast
 import cn.anillc.koishi.*
 import java.io.File
 import java.io.FileInputStream
@@ -21,7 +19,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 
-class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
+class Settings : AppCompatActivity(), Preference.OnPreferenceClickListener {
 
     companion object {
         val TAG = this::class.simpleName
@@ -122,7 +120,7 @@ class Settings : FragmentActivity(), Preference.OnPreferenceClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != pickerCode || resultCode != Activity.RESULT_OK) return
+        if (requestCode != pickerCode || resultCode != AppCompatActivity.RESULT_OK) return
 
         val packagePath = filesDir.path
         val dismiss = loadingAlert(this, R.string.import_loading)
