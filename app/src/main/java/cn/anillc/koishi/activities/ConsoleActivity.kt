@@ -1,18 +1,16 @@
 package cn.anillc.koishi.activities
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.services.KoishiService
-import cn.anillc.koishi.services.ProotService
 import cn.anillc.koishi.showToast
 
-class ConsoleActivity : Activity() {
+class ConsoleActivity : AppCompatActivity() {
 
     private lateinit var webview: WebView
 

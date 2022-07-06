@@ -1,11 +1,10 @@
 package cn.anillc.koishi.activities
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.removeVt100ControlChars
@@ -13,7 +12,7 @@ import cn.anillc.koishi.services.KoishiService
 import cn.anillc.koishi.services.ProotService
 import cn.anillc.koishi.showToast
 
-class KoishiActivity : Activity() {
+class KoishiActivity : AppCompatActivity() {
 
     companion object {
         val TAG = this::class.simpleName
