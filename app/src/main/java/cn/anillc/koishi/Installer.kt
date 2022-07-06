@@ -102,7 +102,7 @@ fun unpackZip(fileName: String, target: String, context: Context) {
                     if (zipEntry.isDirectory) {
                         file.mkdirs()
                     } else {
-                        file.parentFile.mkdirs()
+                        file.parentFile!!.mkdirs()
 
                         FileOutputStream(file).use {
                             zip.copyTo(it)
