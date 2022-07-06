@@ -23,7 +23,7 @@ dependencyResolutionManagement {
             // Android Gradle Plugin (Defined AGP version)
             library("android-gradle", "com.android.tools.build", "gradle").version("7.2.1")
             // Kotlin Gradle Plugin (Defined Kotlin language version)
-            library("kotlin-gradle", "org.jetbrains.kotlin", "kotlin-gradle-plugin").version("1.6.10")
+            library("kotlin-gradle", "org.jetbrains.kotlin", "kotlin-gradle-plugin").version("1.6.21")
 
             // Android desugar
             library("android-desugar", "com.android.tools", "desugar_jdk_libs").version("1.1.5")
