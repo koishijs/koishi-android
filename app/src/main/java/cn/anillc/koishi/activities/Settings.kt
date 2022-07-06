@@ -28,7 +28,7 @@ class Settings : AppCompatActivity(), Preference.OnPreferenceClickListener {
     class KoishiPreferenceFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.settings, rootKey)
-            findPreference("about").summary = ABOUT
+            findPreference<Preference>("about")!!.summary = ABOUT
         }
     }
 
@@ -42,8 +42,8 @@ class Settings : AppCompatActivity(), Preference.OnPreferenceClickListener {
         supportFragmentManager.beginTransaction()
             .add(android.R.id.content, preferenceFragment)
             .commitNow()
-        preferenceFragment.findPreference("export").onPreferenceClickListener = this
-        preferenceFragment.findPreference("import").onPreferenceClickListener = this
+        preferenceFragment.findPreference<Preference>("export")!!.onPreferenceClickListener = this
+        preferenceFragment.findPreference<Preference>("import")!!.onPreferenceClickListener = this
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {

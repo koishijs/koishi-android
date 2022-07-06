@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
 
     defaultConfig {
         applicationId = "cn.anillc.koishi"
@@ -55,6 +55,6 @@ dependencies {
 
     coreLibraryDesugaring(libs.android.desugar)
 
-    implementation(libs.android.support.appcompat)
-    implementation(libs.android.support.preference)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.preference)
 }

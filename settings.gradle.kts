@@ -28,9 +28,9 @@ dependencyResolutionManagement {
             // Android desugar
             library("android-desugar", "com.android.tools", "desugar_jdk_libs").version("1.1.5")
 
-            // Deprecated Android Support
-            library("android-support-appcompat", "com.android.support", "appcompat-v7").version("28.0.0")
-            library("android-support-preference", "com.android.support", "preference-v7").version("28.0.0")
+            // Jetpack
+            library("androidx-appcompat", "androidx.appcompat", "appcompat").version("1.4.2")
+            library("androidx-preference", "androidx.preference", "preference-ktx").version("1.2.0")
         }
     }
 }
