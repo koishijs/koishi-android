@@ -70,6 +70,8 @@ fun unpackZip(fileName: String, target: String, context: Context) {
     val targetFile = File(targetPath)
     val stagingFile = File(stagingPath)
 
+    if (targetFile.exists()) return
+
     if (stagingFile.exists() && !stagingFile.rm()) {
         throw Exception("cannot delete data-staging folder")
     }
