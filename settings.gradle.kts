@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 
             // Jetpack
             library("androidx-appcompat", "androidx.appcompat", "appcompat").version("1.4.2")
+            library("androidx-lifecycle", "androidx.lifecycle", "lifecycle-runtime-ktx").version("2.3.1")
             library("androidx-preference", "androidx.preference", "preference-ktx").version("1.2.0")
 
             // Jetpack Compose
