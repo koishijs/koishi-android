@@ -37,7 +37,7 @@
             <ImageView
                 android:layout_width="65dp"
                 android:layout_height="65dp"
-                app:srcCompat="@mipmap/koishi"
+                app:srcCompat="@mipmap/ic_koishi_circle"
                 android:contentDescription="@string/app_name"
                 android:layout_marginEnd="30dp"/>
 
