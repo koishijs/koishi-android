@@ -15,6 +15,7 @@ android {
     }
 
     buildFeatures {
+        compose = true
         viewBinding = true
         dataBinding = true
     }
@@ -57,4 +58,12 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.preference)
+
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.lifecycle)
+
+    implementation(libs.google.android.material)
 }
