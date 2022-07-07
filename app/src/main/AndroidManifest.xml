@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activities.StartActivity" />
         <activity android:name=".activities.KoishiActivity" />
         <activity android:name=".activities.ConsoleActivity" />
         <activity android:name=".activities.Settings" />
