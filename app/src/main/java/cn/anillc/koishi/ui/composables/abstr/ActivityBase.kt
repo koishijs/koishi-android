@@ -1,4 +1,4 @@
-package cn.anillc.koishi.ui.composables
+package cn.anillc.koishi.ui.composables.abstr
 
 import androidx.compose.runtime.Composable
 import cn.anillc.koishi.ui.theming.KoishiTheme

@@ -1,4 +1,4 @@
-package cn.anillc.koishi.ui.composables
+package cn.anillc.koishi.ui.composables.abstr
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
