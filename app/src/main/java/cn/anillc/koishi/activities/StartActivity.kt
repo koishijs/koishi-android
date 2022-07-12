@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -100,7 +101,7 @@ fun StartScaffold() {
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 tonalElevation = Dp(0f)
             ) {
-                if (currentRoute != firstRoute) {
+                AnimatedVisibility(currentRoute != firstRoute) {
                     TextButton(
                         onClick = { nav.navigateUp() }
                     ) {
@@ -108,7 +109,7 @@ fun StartScaffold() {
                     }
                 }
                 Spacer(Modifier.weight(1f, true))
-                if (currentRoute != tabs.last().route) {
+                AnimatedVisibility(currentRoute != tabs.last().route) {
                     TextButton(
                         onClick = {
                             nav.navigate(tabs[tabs.indexOfFirst { it.route == currentRoute } + 1].route)
