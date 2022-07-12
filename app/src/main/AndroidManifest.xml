@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:installLocation="internalOnly"
-    package="cn.anillc.koishi">
+    package="cn.anillc.koishi"
+    android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,8 +13,8 @@
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_koishi"
-        android:roundIcon="@mipmap/ic_koishi_round"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_koishi_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Koishi"
         android:usesCleartextTraffic="true">
