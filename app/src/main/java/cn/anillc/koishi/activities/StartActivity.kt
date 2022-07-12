@@ -126,7 +126,7 @@ fun StartScaffold() {
             NavHost(
                 modifier = Modifier.fillMaxSize(),
                 navController = nav,
-                startDestination = "welcome"
+                startDestination = firstRoute
             ) {
                 tabs.forEach { tab ->
                     composable(tab.route) { tab.content() }
