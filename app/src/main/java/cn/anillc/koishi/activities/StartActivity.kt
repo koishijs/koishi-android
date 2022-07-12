@@ -15,16 +15,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -41,42 +45,43 @@ class StartActivity : ComponentActivity() {
     }
 }
 
-val LocalNavHostController = compositionLocalOf<NavHostController?> { null }
+data class Tab(val route: String, val content: @Composable () -> Unit)
 
 @Composable
 fun StartCompose() {
-    // Navigation control
-    val nav = rememberNavController()
-
-    // Content
     KoishiTheme {
-        CompositionLocalProvider(
-            LocalNavHostController provides nav
-        ) {
-            NavHost(
-                modifier = Modifier.fillMaxSize(),
-                navController = nav,
-                startDestination = "welcome"
-            ) {
-                composable("welcome") { TabWelcome() }
-                composable("request_permission") { TabRequestPermission() }
-            }
-        }
+        StartScaffold()
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabScaffold(
-    enabled: Boolean = true,
-    prev: Boolean = true,
-    next: String = "",
-    content: @Composable () -> Unit
-) {
-    val colorSurface = MaterialTheme.colorScheme.surface
+fun StartScaffold() {
+    val colorPrimary = MaterialTheme.colorScheme.primary
 
-    val nav = LocalNavHostController.current!!
+    val tabs by remember {
+        mutableStateOf(
+            arrayOf(
+                Tab("welcome") { TabWelcome() },
+                Tab("request_permission") { TabRequestPermission() }
+            )
+        )
+    }
+    val firstRoute by remember { mutableStateOf(tabs.first().route) }
+
+    // Navigation control
+    val nav = rememberNavController()
+    var currentRoute by remember { mutableStateOf(firstRoute) }
+
+    DisposableEffect(LocalLifecycleOwner.current) {
+        val listener = NavController.OnDestinationChangedListener { _, navDestination, _ ->
+            navDestination.route?.let { currentRoute = it }
+        }
+
+        nav.addOnDestinationChangedListener(listener)
+        onDispose { nav.removeOnDestinationChangedListener(listener) }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -86,7 +91,7 @@ fun TabScaffold(
                 modifier = Modifier
                     .drawBehind {
                         drawLine(
-                            colorSurface,
+                            colorPrimary,
                             Offset(0f, 0f),
                             Offset(size.width, 0f),
                             1 * density // 1dp
@@ -95,19 +100,19 @@ fun TabScaffold(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 tonalElevation = Dp(0f)
             ) {
-                if (prev) {
+                if (currentRoute != firstRoute) {
                     TextButton(
-                        enabled = enabled,
                         onClick = { nav.navigateUp() }
                     ) {
                         Text(stringResource(R.string.koishi_common_prev))
                     }
                 }
                 Spacer(Modifier.weight(1f, true))
-                if (next.isNotEmpty()) {
+                if (currentRoute != tabs.last().route) {
                     TextButton(
-                        enabled = enabled,
-                        onClick = { nav.navigate(next) }
+                        onClick = {
+                            nav.navigate(tabs[tabs.indexOfFirst { it.route == currentRoute } + 1].route)
+                        }
                     ) {
                         Text(stringResource(R.string.koishi_common_next))
                     }
@@ -117,26 +122,27 @@ fun TabScaffold(
     ) {
         Box(Modifier.fillMaxSize()) {
             AccentBackground(Modifier.align(Alignment.Center))
-            content()
+            NavHost(
+                modifier = Modifier.fillMaxSize(),
+                navController = nav,
+                startDestination = "welcome"
+            ) {
+                tabs.forEach { tab ->
+                    composable(tab.route) { tab.content() }
+                }
+            }
         }
     }
 }
 
 @Composable
 fun TabWelcome() {
-    TabScaffold(
-        next = "request_permission",
-        prev = false
-    ) {
-        // TODO
-    }
+    // TODO
 }
 
 @Composable
 fun TabRequestPermission() {
-    TabScaffold {
-        // TODO
-    }
+    // TODO
 }
 
 @Preview
