@@ -2,16 +2,17 @@ package cn.anillc.koishi.activities
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.Environment
+import android.text.format.DateFormat
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import android.text.format.DateFormat
-import android.util.Log
 import cn.anillc.koishi.*
 import java.io.File
 import java.io.FileInputStream
@@ -86,7 +87,7 @@ class Settings : AppCompatActivity(), Preference.OnPreferenceClickListener {
 
                 val today = Date()
                 val date = DateFormat.format("yyyy-MM-dd", today)
-                val backups = external.list()
+                val backups = external.list() ?: arrayOf()
                 val backupRegex = Regex("^koishi-$date-(\\d+)\\.zip\$")
                 val last = backups.mapNotNull(backupRegex::matchEntire)
                     .map { it.groupValues[1].toInt() }.sorted().reversed().getOrNull(0)
@@ -107,65 +108,62 @@ class Settings : AppCompatActivity(), Preference.OnPreferenceClickListener {
         }.start()
     }
 
-    private val pickerCode = 514
+    private val pickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
+            if (res.resultCode != RESULT_OK) return@registerForActivityResult
+
+            val packagePath = filesDir.path
+            val dismiss = loadingAlert(this, R.string.import_loading)
+            val koishiZip = File("$packagePath/home/koishi.zip")
+            Thread {
+                try {
+                    try {
+                        val input = contentResolver.openInputStream(res.data!!.data!!)
+                        input!!.use { FileOutputStream(koishiZip).use(it::copyTo) }
+                    } catch (e: Exception) {
+                        showToastOnUiThread(R.string.import_file_failed)
+                        throw e
+                    }
+
+                    val zipList = startProotProcessWait(
+                        "unzip -l koishi.zip | grep koishi.yml",
+                        packagePath, koishiApplication.envPath
+                    )
+
+                    if (zipList == null || !zipList.contains("koishi.yml")) {
+                        showToastOnUiThread(R.string.invalid_file)
+                        koishiZip.rm()
+                        return@Thread
+                    }
+
+                    try {
+                        val oldKoishi = File("${packagePath}/home/koishi-app")
+                        if (oldKoishi.exists() && !oldKoishi.rm()) {
+                            throw Exception("failed to delete koishi")
+                        }
+                    } catch (e: Exception) {
+                        showToastOnUiThread(R.string.failed_to_delete_koishi)
+                        throw e
+                    }
+
+                    showToastOnUiThread(R.string.import_file_succeed)
+                } catch (e: Exception) {
+                    Log.e(TAG, "onActivityResult: failed to import koishi", e)
+                } finally {
+                    runOnUiThread(dismiss)
+                }
+            }.start()
+        }
 
     private fun importKoishi() = acceptAlert(this, R.string.import_koishi_alert) { _, _ ->
         if (koishiApplication.serviceConnection.koishiBinder?.service?.process?.get() != null) {
             showToast(R.string.stop_before_import)
             return@acceptAlert
         }
-        startActivityForResult(
+        pickerLauncher.launch(
             Intent.createChooser(Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "application/zip"
-            }, "Choose a file"),
-            pickerCode
+            }, "Choose a file")
         )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != pickerCode || resultCode != AppCompatActivity.RESULT_OK) return
-
-        val packagePath = filesDir.path
-        val dismiss = loadingAlert(this, R.string.import_loading)
-        val koishiZip = File("$packagePath/home/koishi.zip")
-        Thread {
-            try {
-                try {
-                    val input = contentResolver.openInputStream(data!!.data!!)
-                    input!!.use { FileOutputStream(koishiZip).use(it::copyTo) }
-                } catch (e: Exception) {
-                    showToastOnUiThread(R.string.import_file_failed)
-                    throw e
-                }
-
-                val zipList = startProotProcessWait(
-                    "unzip -l koishi.zip | grep koishi.yml",
-                    packagePath, koishiApplication.envPath
-                )
-
-                if (zipList == null || !zipList.contains("koishi.yml")) {
-                    showToastOnUiThread(R.string.invalid_file)
-                    koishiZip.rm()
-                    return@Thread
-                }
-
-                try {
-                    val oldKoishi = File("${packagePath}/home/koishi-app")
-                    if (oldKoishi.exists() && !oldKoishi.rm()) {
-                        throw Exception("failed to delete koishi")
-                    }
-                } catch (e: Exception) {
-                    showToastOnUiThread(R.string.failed_to_delete_koishi)
-                    throw e
-                }
-
-                showToastOnUiThread(R.string.import_file_succeed)
-            } catch (e: Exception) {
-                Log.e(TAG, "onActivityResult: failed to import koishi", e)
-            } finally {
-                runOnUiThread(dismiss)
-            }
-        }.start()
     }
 }
