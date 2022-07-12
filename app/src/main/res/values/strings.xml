@@ -24,4 +24,7 @@
     <string name="export_file_succeed">导出文件已保存至 %s</string>
     <string name="failed_to_initialize">初始化失败: %s</string>
     <string name="stop_before_import">请在导入前停止 Koishi 实例</string>
+
+    <string name="koishi_common_next">下一步</string>
+    <string name="koishi_common_prev">返回</string>
 </resources>

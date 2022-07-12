@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:installLocation="internalOnly"
-    package="cn.anillc.koishi">
+    package="cn.anillc.koishi"
+    android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,11 +12,11 @@
         android:name=".KoishiApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/koishi"
+        android:icon="@mipmap/ic_koishi"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_koishi_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Koishi"
-        tools:targetApi="28"
         android:usesCleartextTraffic="true">
         <!--    android:dataExtractionRules="@xml/data_extraction_rules"-->
 
@@ -30,6 +29,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activities.StartActivity" />
         <activity android:name=".activities.KoishiActivity" />
         <activity android:name=".activities.ConsoleActivity" />
         <activity android:name=".activities.Settings" />

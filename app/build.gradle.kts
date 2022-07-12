@@ -12,9 +12,14 @@ android {
         targetSdk = 28
         versionCode = 1
         versionName = "0.0.1"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildFeatures {
+        compose = true
         viewBinding = true
         dataBinding = true
     }
@@ -43,7 +48,9 @@ android {
     }
 
     packagingOptions {
-        resources.excludes.add("META-INF/*")
+        resources {
+            excludes += "META-INF/*"
+        }
     }
 
     composeOptions {
@@ -56,5 +63,13 @@ dependencies {
     coreLibraryDesugaring(libs.android.desugar)
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.preference)
+
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.lifecycle)
+    implementation(libs.androidx.compose.navigation)
 }
