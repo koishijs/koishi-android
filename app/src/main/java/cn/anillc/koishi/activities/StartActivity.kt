@@ -1,10 +1,11 @@
 package cn.anillc.koishi.activities
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomAppBar
@@ -16,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -27,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cn.anillc.koishi.R
+import cn.anillc.koishi.ui.composables.asset.AccentBackground
 import cn.anillc.koishi.ui.theming.KoishiTheme
 
 class StartActivity : ComponentActivity() {
@@ -62,13 +65,14 @@ fun StartCompose() {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabScaffold(
     enabled: Boolean = true,
     prev: Boolean = true,
     next: String = "",
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable () -> Unit
 ) {
     val colorSurface = MaterialTheme.colorScheme.surface
 
@@ -109,9 +113,13 @@ fun TabScaffold(
                     }
                 }
             }
-        },
-        content = content
-    )
+        }
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            AccentBackground(Modifier.align(Alignment.Center))
+            content()
+        }
+    }
 }
 
 @Composable
