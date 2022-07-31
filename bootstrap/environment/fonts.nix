@@ -1,9 +1,6 @@
-{ runCommand, makeFontsConf, noto-fonts, noto-fonts-cjk-sans }: let
+{ runCommand, makeFontsConf, source-han-sans }: let
     fonts = makeFontsConf {
-        fontDirectories = [
-            noto-fonts
-            noto-fonts-cjk-sans
-        ];
+        fontDirectories = [ source-han-sans ];
     };
 in runCommand "etc-fonts" {} ''
     mkdir -p $out/etc/fonts

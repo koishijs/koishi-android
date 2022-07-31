@@ -1,4 +1,4 @@
-{ pkgs, buildEnv, callPackage, lib, inputs }:
+{ pkgs, buildEnv, callPackage, lib, inputs, extraPackages ? [], withFonts ? false }:
 
 with builtins;
 with lib;
@@ -16,7 +16,7 @@ in buildEnv {
         login env
         certs
         busybox zip
-        chromium fonts
         nodejs
-    ];
+    ] ++ (optional withFonts fonts)
+    ++ extraPackages;
 }

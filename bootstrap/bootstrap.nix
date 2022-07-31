@@ -1,4 +1,4 @@
-{ pkgs, callPackage, lib, ... }: let
+{ pkgs, callPackage, lib, extraPackages ? [], withFonts ? false, ... }: let
   aarch64-pkgs = pkgs.pkgsCross.aarch64-multiplatform;
 in
 
@@ -6,7 +6,7 @@ with builtins;
 with lib;
 
 let
-  env = callPackage ./environment {};
+  env = callPackage ./environment { inherit extraPackages withFonts; };
   info = readFile "${pkgs.closureInfo { rootPaths = [ env ]; }}/store-paths";
 
   bootstrap = pkgs.runCommand "bootstrap" {} ''

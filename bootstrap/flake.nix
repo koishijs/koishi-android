@@ -20,14 +20,28 @@
                     })
             ];
         };
+        aarch64-pkgs = import nixpkgs {
+            system = "aarch64-linux";
+        };
     in {
-        packages.bootstrap = pkgs.callPackage ./bootstrap.nix {};
-        apps.copy = mkApp {
-            drv = pkgs.writeScriptBin "copy" ''
-                FOLDER=../app/src/main/assets/bootstrap
-                mkdir -p $FOLDER
-                cp -f ${self.packages.${system}.bootstrap}/* $FOLDER
-            '';
+        packages = {
+            bootstrap       = pkgs.callPackage ./bootstrap.nix {};
+            bootstrap-extra = pkgs.callPackage ./bootstrap.nix {
+                extraPackages = with aarch64-pkgs; [ chromium ];
+                withFonts = true;
+            };
+        };
+        apps = let
+            app = bootstrap: mkApp {
+                drv = pkgs.writeScriptBin "copy" ''
+                    FOLDER=../app/src/main/assets/bootstrap
+                    mkdir -p $FOLDER
+                    cp -f ${bootstrap}/* $FOLDER
+                '';
+            };
+        in {
+            copy       = app self.packages.${system}.bootstrap;
+            copy-extra = app self.packages.${system}.bootstrap-extra;
         };
     });
 }
