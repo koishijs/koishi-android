@@ -1,10 +1,9 @@
 package cn.anillc.koishi.activities
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
-import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import cn.anillc.koishi.KoishiApplication
 import cn.anillc.koishi.R
 import cn.anillc.koishi.services.KoishiService
@@ -13,15 +12,6 @@ import cn.anillc.koishi.showToast
 class ConsoleActivity : AppCompatActivity() {
 
     private lateinit var webview: WebView
-
-    private val webViewClient = object : WebViewClient() {
-        override fun onLoadResource(view: WebView, url: String) {
-            view.evaluateJavascript(
-                "document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1920');",
-                null
-            )
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +37,7 @@ class ConsoleActivity : AppCompatActivity() {
         webview.settings.javaScriptEnabled = true
         webview.settings.useWideViewPort = true
         webview.settings.loadWithOverviewMode = true
-        webview.settings.builtInZoomControls = true
-        webview.settings.setSupportZoom(true)
-        webview.webViewClient = webViewClient
+        webview.settings.domStorageEnabled = true
+        webview.settings.databaseEnabled = true
     }
 }
