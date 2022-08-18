@@ -1,0 +1,72 @@
+on:
+  release:
+    types:
+      - created
+  workflow_dispatch:
+
+jobs:
+  upload:
+    strategy:
+      matrix:
+        build:
+          - name: koishi-android
+            copy: copy
+          - name: koishi-android-with-chromium
+            copy: copy-extra
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up variables
+        id: vars
+        run: |
+          RELEASE=$(curl \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H 'Authorization: token ${{ github.token }}' \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          TAG=$(echo "$RELEASE" | jq -r '.tag_name')
+          UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | cut -d '{' -f 1)
+          echo ::set-output name=TAG::$TAG
+          echo ::set-output name=UPLOAD_URL::$UPLOAD_URL
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v15
+
+      - name: setup cachix
+        uses: cachix/cachix-action@v10
+        with:
+          name: koishi
+          authToken: ${{ secrets.CACHIX_TOKEN }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: '11'
+          cache: gradle
+
+      - name: Build
+        run: |
+          TAG=${{ steps.vars.outputs.TAG }}
+          export VERSION_CODE=$(echo "${TAG:1}" | sed 's/\.//g')
+          export VERSION_NAME=$TAG
+          export COPY=${{ matrix.build.copy }}
+          ./build.sh
+
+      - uses: ilharp/sign-android-release@v1
+        name: Sign app APK
+        id: sign_app
+        with:
+          keyAlias: koishi-android
+          signingKey: ${{ secrets.JKS }}
+          keyStorePassword: ${{ secrets.JKS_PASSWORD }}
+          keyPassword: ${{ secrets.JKS_PASSWORD }}
+
+      - name: Upload
+        run: |
+          curl -X POST \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H 'Content-Type: octet-stream' \
+            -H 'Authorization: token ${{ github.token }}' \
+            --data-binary @${{steps.sign_app.outputs.signedFile}} \
+            "${{ steps.vars.outputs.UPLOAD_URL }}?name=${{ matrix.build.name }}-${{ steps.vars.outputs.TAG }}.apk"
