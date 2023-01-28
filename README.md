@@ -1,13 +1,13 @@
 <div align="center">
-  <img width="160" src="https://koishi.js.org/koishi.png" alt="logo">
+  <img width="160" src="https://koishi.chat/logo.png" alt="logo">
   <h1 id="koishi">
-    <a href="https://koishi.js.org/manual/starter/mobile.html" target="_blank">Koishi Android</a>
+    <a href="https://koishi.chat/manual/starter/android.html" target="_blank">Koishi Android</a>
   </h1>
 </div>
 
 Koishi Android 实现了从您的手机上启动 Koishi。
 
-Koishi 是一个现代化跨平台机器人框架。如果您还不了解 Koishi，可以在 [Koishi 的官方文档](https://koishi.js.org/manual/introduction.html) 中了解 Koishi。
+Koishi 是一个现代化跨平台机器人框架。如果您还不了解 Koishi，可以在 [Koishi 的官方文档](https://koishi.chat/manual/introduction.html) 中了解 Koishi。
 
 ## 特性
 
@@ -33,7 +33,7 @@ Koishi Android 使用了 [nix](https://nixos.org) 来构建需要的环境。
 
 ## 鸣谢
 
-[Koishi](https://koishi.js.org) 提供了优秀的 bot 框架与生态。
+[Koishi](https://koishi.chat) 提供了优秀的 bot 框架与生态。
 
 [nix-on-droid](https://github.com/t184256/nix-on-droid) 参考了 nix-on-droid 的实现，部分代码来自于 nix-on-droid，为 Koishi Android 提供了思路。
 
