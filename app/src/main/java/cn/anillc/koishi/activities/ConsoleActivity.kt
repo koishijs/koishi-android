@@ -2,6 +2,7 @@ package cn.anillc.koishi.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import cn.anillc.koishi.KoishiApplication
@@ -39,5 +40,6 @@ class ConsoleActivity : AppCompatActivity() {
         webview.settings.loadWithOverviewMode = true
         webview.settings.domStorageEnabled = true
         webview.settings.databaseEnabled = true
+        webview.webChromeClient = WebChromeClient()
     }
 }

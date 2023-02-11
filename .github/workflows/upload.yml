@@ -48,6 +48,7 @@ jobs:
       - name: Build
         run: |
           TAG=${{ steps.vars.outputs.TAG }}
+          # TODO: increase version code (base version)
           export VERSION_CODE=$(echo "${TAG:1}" | sed 's/\.//g')
           export VERSION_NAME=$TAG
           export COPY=${{ matrix.build.copy }}
