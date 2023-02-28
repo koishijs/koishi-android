@@ -9,6 +9,8 @@
     <string name="koishi_is_not_started">koishi 尚未启动或启动未完成</string>
     <string name="dns_settings">DNS 设置</string>
     <string name="edit_dns_settings">点击修改 DNS 设置</string>
+    <string name="timezone_settings">DNS 设置</string>
+    <string name="edit_timezone_settings">点击修改 DNS 设置</string>
     <string name="backup_koishi">导出 Koishi 备份</string>
     <string name="import_koishi">从文件中导入 Koishi</string>
     <string name="import_koishi_alert">警告：此操作将会覆盖您已有的 Koishi 实例，请确认已备份后再操作</string>

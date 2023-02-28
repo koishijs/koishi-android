@@ -52,22 +52,20 @@ open class ProotService : Service(), Runnable {
     protected fun startProot(cmd: String, env: Map<String, String> = mapOf()) {
         if (process.get() != null) return
         val prootEnv = mutableMapOf(
-            "KOISHI_DNS" to preferences.getString("KOISHI_DNS", DEFAULT_DNS)!!
+            "KOISHI_DNS" to preferences.getString("KOISHI_DNS", DEFAULT_DNS)!!,
+            "KOISHI_TIMEZONE" to preferences.getString("KOISHI_TIMEZONE", DEFAULT_TIMEZONE)!!,
         )
         prootEnv.putAll(env)
-        this.process.set(
-            startProotProcess(
-                """
-setsid sh <<PROOT_EOF
-trap : SIGINT # to get status of process
-echo __PID__: \$$
-$cmd
-echo __STATUS__: \$?
-echo -e '\n[Process exited.]\n\n'
-PROOT_EOF
-""", packagePath, envPath, prootEnv
-            )
-        )
+        val prootCmd = """
+            setsid sh <<PROOT_EOF
+            trap : SIGINT # to get status of process
+            echo __PID__: \$$
+            @PLACEHOLDER@
+            echo __STATUS__: \$?
+            echo -e '\n[Process exited.]\n\n'
+            PROOT_EOF
+        """.trimIndent().replace("@PLACEHOLDER@", cmd)
+        this.process.set(startProotProcess(prootCmd, packagePath, envPath, prootEnv))
         Thread(this).start()
     }
 

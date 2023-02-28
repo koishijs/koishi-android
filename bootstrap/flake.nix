@@ -26,10 +26,7 @@
     in {
         packages = {
             bootstrap       = pkgs.callPackage ./bootstrap.nix {};
-            bootstrap-extra = pkgs.callPackage ./bootstrap.nix {
-                extraPackages = with aarch64-pkgs; [ chromium ];
-                withFonts = true;
-            };
+            bootstrap-extra = pkgs.callPackage ./bootstrap.nix { full = true; };
         };
         apps = let
             app = bootstrap: mkApp {

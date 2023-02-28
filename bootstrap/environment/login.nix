@@ -9,10 +9,11 @@ in writeScriptBin "login" ''
     set -e
 
     # /nix is writable
-    if [ "$KOISHI_DNS" ]; then
-    /bin/cat > /etc/resolv.conf <<EOF
-    nameserver $KOISHI_DNS
-    EOF
+    if [ -n "$KOISHI_DNS" ]; then
+        echo "nameserver $KOISHI_DNS" > /etc/resolv.conf
+    fi
+    if [ -n "$KOISHI_TIMEZONE" ] && [ -e /etc/zoneinfo ]; then
+        /bin/ln -sf /etc/zoneinfo/$KOISHI_TIMEZONE /etc/localtiome
     fi
 
     for var in $(/bin/env | /bin/cut -d '=' -f 1); do unset $var; done

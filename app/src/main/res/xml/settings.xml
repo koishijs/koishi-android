@@ -9,6 +9,12 @@
         android:title="@string/dns_settings"
         android:icon="@drawable/dns"/>
 
+    <EditTextPreference
+        android:key="KOISHI_TIMEZONE"
+        android:summary="@string/edit_timezone_settings"
+        android:title="@string/timezone_settings"
+        android:icon="@drawable/timezone"/>
+
     <Preference
         android:key="export"
         android:title="导出"
