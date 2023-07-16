@@ -1,0 +1,10 @@
+{
+  "name": "ui",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^5.4.0",
+    "@capacitor/core": "^5.4.0"
+  }
+}

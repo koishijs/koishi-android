@@ -18,12 +18,18 @@
         devshells.default = let
           android-sdk = android.sdk.${system} (pkgs: with pkgs; [
             cmdline-tools-latest
-            build-tools-32-0-0
+            build-tools-30-0-3
+            build-tools-33-0-2
             platform-tools
-            platforms-android-28
+            platforms-android-30
+            platforms-android-33
             emulator
           ]);
         in {
+          env = [{
+            name = "ANDROID_HOME";
+            value = "${android-sdk}/share/android-sdk";
+          }];
           packages = with pkgs; [
             android-sdk gradle yarn
           ];
