@@ -29,6 +29,9 @@
           env = [{
             name = "ANDROID_HOME";
             value = "${android-sdk}/share/android-sdk";
+          } {
+            name = "CAPACITOR_ANDROID_STUDIO_PATH";
+            eval = "$(which android-studio)";
           }];
           packages = with pkgs; [
             android-sdk gradle yarn

@@ -1,0 +1,7 @@
+{
+  "name": "Koishi",
+  "type": "vue-vite",
+  "integrations": {
+    "capacitor": {}
+  }
+}
