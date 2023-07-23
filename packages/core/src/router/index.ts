@@ -1,13 +1,18 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/Home.vue'
+import Splash from '../views/Splash.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
       path: '/',
+      name: 'splash',
+      component: Splash,
+    },
+    {
+      path: '/home',
       name: 'home',
-      component: HomeView
+      component: () => import('../views/Home.vue')
     },
   ]
 })
