@@ -1,8 +1,5 @@
 {
   "files": [],
-  "compilerOptions": {
-    "types": ["naive-ui/volar"]
-  },
   "references": [
     {
       "path": "./tsconfig.node.json"
