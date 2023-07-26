@@ -18,13 +18,13 @@
 }
 
 .icon {
-  position: relative;
+  position: absolute;
   width: 172px;
   height: 172px;
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 200px;
+  top: 232px;
 }
 
 .icon::before {
@@ -44,16 +44,17 @@
 }
 
 .welcome {
-  position: relative;
+  position: absolute;
   font-size: 22px;
   font-weight: 600;
-  top: 300px;
+  top: 520px;
 }
 
 .starting {
-  position: relative;
+  position: absolute;
   font-size: 14px;
   color: #636363;
-  top: 500px;
+  margin: auto;
+  bottom: 81px;
 }
 </style>
