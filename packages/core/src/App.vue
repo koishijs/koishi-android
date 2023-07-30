@@ -1,9 +1,12 @@
 <template>
-  <RouterView />
+  <bg>
+    <RouterView />
+  </bg>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import Bg from './components/Bg.vue'
 </script>
 
 <style>
