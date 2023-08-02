@@ -1,12 +1,9 @@
 <template>
   <div class="bg">
-    <div class="inner">
-      <div :class="splash ? 'left-splash' : 'left'">
-        <img v-if="splash" class="eyelash" src="../assets/eyelash.png" />
-      </div>
-      <div v-if="!splash" class="right"></div>
+    <div :class="splash ? 'left-splash' : 'left'">
+      <img v-if="splash" class="eyelash" src="../assets/eyelash.png" />
     </div>
-    <slot></slot>
+    <div v-if="!splash" class="right"></div>
   </div>
 </template>
 
@@ -21,15 +18,12 @@ const splash = computed(() => route.name === 'splash')
 .bg {
   width: 100%;
   height: 100%;
-}
-
-.inner {
-  width: 100%;
-  height: 100%;
   position: absolute;
+  z-index: -1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 .left-splash {
