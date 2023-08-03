@@ -1,9 +1,15 @@
 <template>
   <div class="bg">
-    <div :class="splash ? 'left-splash' : 'left'">
-      <img v-if="splash" class="eyelash" src="../assets/eyelash.png" />
+    <div :class="{
+      'left-splash': true,
+      'left': !splash,
+    }">
+        <img v-if="splash" class="eyelash" src="../assets/eyelash.png" />
     </div>
-    <div v-if="!splash" class="right"></div>
+    <div :class="{
+      'right-splash': true,
+      'right': !splash,
+    }"></div>
   </div>
 </template>
 
@@ -34,6 +40,7 @@ const splash = computed(() => route.name === 'splash')
   justify-content: center;
   align-items: center;
   top: 232px;
+  transition: 1s ease;
 }
 
 .left-splash::before {
@@ -46,6 +53,7 @@ const splash = computed(() => route.name === 'splash')
   border-radius: 50%;
   filter: blur(40px);
   background-color: #5546A3BF;
+  transition: 1s ease;
 }
 
 .left-splash .eyelash {
@@ -53,25 +61,32 @@ const splash = computed(() => route.name === 'splash')
 }
 
 .left {
-  position: absolute;
   width: 358px;
   height: 358px;
-  left: -92px;
+  transform: translateX(-92px);
   top: -44px;
-  border-radius: 50%;
+}
+
+.left::before {
   filter: blur(80px);
   background-color: #5546A34D;
 }
 
-.right {
+.right-splash {
   position: absolute;
-  width: 358px;
-  height: 358px;
-  margin: auto;
-  right: -92px;
-  bottom: -44px;
+  width: 172px;
+  height: 172px;
   border-radius: 50%;
   filter: blur(80px);
   background-color: #E255554D;
+  bottom: -172px;
+  transition: 1s ease;
+}
+
+.right {
+  width: 358px;
+  height: 358px;
+  transform: translateX(92px);
+  bottom: -44px;
 }
 </style>

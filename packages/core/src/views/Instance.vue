@@ -1,7 +1,6 @@
 <template>
   <title-layout>
     <template #text>Koishi</template>
-    123
   </title-layout>
 </template>
 

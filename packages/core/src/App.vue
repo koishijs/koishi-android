@@ -1,12 +1,26 @@
 <template>
   <bg></bg>
-  <RouterView />
+  <Transition>
+    <RouterView />
+  </Transition>
 </template>
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Bg from './components/Bg.vue'
 </script>
+
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
 
 <style>
 * {
