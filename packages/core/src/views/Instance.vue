@@ -1,6 +1,13 @@
 <template>
   <title-layout>
     <template #text>Koishi</template>
+    <div class="information">
+      <p><b>Information</b></p>
+      <p>Instance 2/3</p>
+      <p>Uptime 1 days, 12 hours</p>
+      <p>System Android 11</p>
+    </div>
+    <div class="instances"></div>
   </title-layout>
 </template>
 
@@ -9,5 +16,9 @@ import TitleLayout from '@/components/TitleLayout.vue'
 </script>
 
 <style scoped>
-
+.information {
+  padding-left: 30px;
+  padding-right: 30px;
+  line-height: 25px;
+}
 </style>
