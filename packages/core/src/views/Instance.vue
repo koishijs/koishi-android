@@ -7,12 +7,15 @@
       <p>Uptime 1 days, 12 hours</p>
       <p>System Android 11</p>
     </div>
-    <div class="instances"></div>
+    <div class="instances">
+      <card>123</card>
+    </div>
   </title-layout>
 </template>
 
 <script lang="ts" setup>
-import TitleLayout from '@/components/TitleLayout.vue'
+import TitleLayout from '../components/TitleLayout.vue'
+import Card from '../components/Card.vue'
 </script>
 
 <style scoped>
