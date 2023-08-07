@@ -1,6 +1,7 @@
 <template>
   <title-layout>
     <template #text>Koishi</template>
+    <template #right><img src="../assets/settings.png"/></template>
     <div class="information">
       <p><b>Information</b></p>
       <p>Instance 2/3</p>
@@ -8,14 +9,14 @@
       <p>System Android 11</p>
     </div>
     <div class="instances">
-      <card>123</card>
+      <instance-card name="default" status="Stopped"></instance-card>
     </div>
   </title-layout>
 </template>
 
 <script lang="ts" setup>
 import TitleLayout from '../components/TitleLayout.vue'
-import Card from '../components/Card.vue'
+import InstanceCard from '../components/InstanceCard.vue'
 </script>
 
 <style scoped>
@@ -23,5 +24,11 @@ import Card from '../components/Card.vue'
   padding-left: 30px;
   padding-right: 30px;
   line-height: 25px;
+}
+
+.instances {
+  margin-top: 21px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 </style>
