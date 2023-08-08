@@ -12,6 +12,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
+    "@vueuse/core": "^10.4.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
