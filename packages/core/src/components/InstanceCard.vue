@@ -1,13 +1,16 @@
 <template>
-  <div class="card">
-    <div class="top">
+  <div ref="card" @click="focused = true" class="card">
+    <div :class="{
+      'top': true,
+      'top-radius': !focused,
+    }">
       <img class="icon" src="../assets/koishi.png" />
       <div class="text">
         <b>{{ props.name }}</b>
         <p><small>{{ props.status }}</small></p>
       </div>
     </div>
-    <div class="bottom">
+    <div v-if="focused" class="bottom">
       <div>
         <img src="../assets/play.svg" />
         Start
@@ -29,12 +32,18 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps({
   name: String,
   status: String,
+  focused: Boolean,
 })
+
+const card = ref()
+const focused  = ref(props.focused)
+onClickOutside(card, () => focused.value = false)
 </script>
 
 <style scoped>
@@ -54,7 +63,6 @@ const props = defineProps({
   border-radius: 12px 12px 0 0;
   overflow: hidden;
   padding: 12px;
-  border-bottom: 1px #CAC4D0 solid;
   display: flex;
   align-items: center;
 }
@@ -75,6 +83,10 @@ const props = defineProps({
   line-height: 28px;
 }
 
+.top-radius {
+  border-radius: 12px;
+}
+
 .bottom {
   width: 100%;
   height: 45px;
@@ -82,6 +94,7 @@ const props = defineProps({
   border-radius: 0 0 12px 12px;
   overflow: hidden;
   padding: 12px;
+  border-top: 1px #CAC4D0 solid;
   display: flex;
   align-items: center;
   justify-content: space-around;

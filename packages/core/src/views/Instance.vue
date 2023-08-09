@@ -10,6 +10,8 @@
     </div>
     <div class="instances">
       <instance-card name="default" status="Stopped"></instance-card>
+      <instance-card name="default" status="Stopped"></instance-card>
+      <instance-card name="default" status="Stopped"></instance-card>
     </div>
   </title-layout>
 </template>
@@ -30,5 +32,8 @@ import InstanceCard from '../components/InstanceCard.vue'
   margin-top: 21px;
   padding-left: 30px;
   padding-right: 30px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
 }
 </style>
