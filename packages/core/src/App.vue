@@ -1,8 +1,8 @@
 <template>
   <bg></bg>
   <router-view v-slot="{ Component }">
-    <transition>
-      <component :is="Component"/>
+    <transition mode="out-in">
+      <component :is="Component" :key="$route.path"/>
     </transition>
   </router-view>
 </template>
@@ -15,7 +15,7 @@ import Bg from './components/Bg.vue'
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 1.3s ease;
+  transition: opacity .7s ease;
 }
 
 .v-enter-from,
