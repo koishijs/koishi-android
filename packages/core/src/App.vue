@@ -1,8 +1,10 @@
 <template>
   <bg></bg>
-  <Transition>
-    <RouterView />
-  </Transition>
+  <router-view v-slot="{ Component }">
+    <transition>
+      <component :is="Component"/>
+    </transition>
+  </router-view>
 </template>
 
 <script setup lang="ts">
@@ -13,7 +15,7 @@ import Bg from './components/Bg.vue'
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 2s ease;
+  transition: opacity 1.3s ease;
 }
 
 .v-enter-from,
