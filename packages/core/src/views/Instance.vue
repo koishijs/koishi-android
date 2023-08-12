@@ -9,7 +9,7 @@
       <p>System Android 11</p>
     </div>
     <div class="instances">
-      <instance-card name="default" status="Stopped"></instance-card>
+      <instance-card :focused="true" name="default" status="Stopped"></instance-card>
       <instance-card name="default" status="Stopped"></instance-card>
       <instance-card name="default" status="Stopped"></instance-card>
     </div>
