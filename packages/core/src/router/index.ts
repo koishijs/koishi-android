@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'instance',
       component: () => import('../views/Instance.vue')
     },
+    {
+      path: '/terminal',
+      name: 'terminal',
+      component: () => import('../views/Terminal.vue')
+    },
   ]
 })
 
