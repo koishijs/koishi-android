@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import TitleLayout from '@/components/TitleLayout.vue'
+import TitleLayout from '../components/TitleLayout.vue'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 
