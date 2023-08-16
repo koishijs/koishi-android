@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import 'xterm/css/xterm.css'
 
 const app = createApp(App)
 
