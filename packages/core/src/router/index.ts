@@ -10,11 +10,6 @@ const router = createRouter({
       component: Splash,
     },
     {
-      path: '/home',
-      name: 'home',
-      component: () => import('../views/Home.vue')
-    },
-    {
       path: '/instance',
       name: 'instance',
       component: () => import('../views/Instance.vue')
