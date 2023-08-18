@@ -1,7 +1,7 @@
 <template>
   <title-layout>
     <template #text>Koishi</template>
-    <template #right><img src="../assets/settings.png"/></template>
+    <template #right><img src="../assets/settings.png" @click="$router.push('/setting')"/></template>
     <div class="information">
       <p><b>Information</b></p>
       <p>Instance 2/3</p>
