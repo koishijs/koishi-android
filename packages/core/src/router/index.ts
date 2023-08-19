@@ -10,9 +10,9 @@ const router = createRouter({
       component: Splash,
     },
     {
-      path: '/instance',
-      name: 'instance',
-      component: () => import('../views/Instance.vue')
+      path: '/instances',
+      name: 'instances',
+      component: () => import('../views/Instances.vue')
     },
     {
       path: '/terminal',
@@ -20,9 +20,9 @@ const router = createRouter({
       component: () => import('../views/Terminal.vue')
     },
     {
-      path: '/setting',
-      name: 'setting',
-      component: () => import('../views/Setting.vue')
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/Settings.vue')
     },
   ]
 })
