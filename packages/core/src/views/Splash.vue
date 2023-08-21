@@ -1,5 +1,5 @@
 <template>
-  <div class="splash" @click="$router.push('/settings')">
+  <div class="splash" @click="$router.push('/instances')">
     <div class="welcome">Welcome to Koishi</div>
     <div class="starting">Starting koishi......</div>
   </div>
