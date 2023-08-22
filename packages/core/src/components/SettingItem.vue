@@ -1,26 +1,41 @@
 <template>
-  <div class="item">
+  <div class="item" @click="click">
     <img :src="props.icon" />
     <div class="text">
       <p class="name"><slot></slot></p>
       <p class="description"><slot name="description"></slot></p>
     </div>
-    <img v-if="props.type == 'next'" src="../assets/next.svg" />
-    <!-- TODO: v-else switch -->
+    <img v-if="props.type === 'next'" src="../assets/next.svg" />
+    <Switch v-else-if="props.type === 'switch'"
+      :modelValue="props.modelValue"
+      @update:modelValue="(value: boolean) => emit('update:modelValue', value)"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
+import Switch from '../components/Switch.vue'
 
 const props = defineProps({
   icon: String,
+  // for switch
+  modelValue: Boolean,
   // next/switch
   type: {
     type: String,
     default: 'next',
   },
 })
+
+const emit = defineEmits(['update:modelValue', 'click'])
+
+function click() {
+  if (props.type === 'next') {
+    emit('click')
+  } else if (props.type === 'switch') {
+    emit('update:modelValue', !props.modelValue)
+  }
+}
 </script>
 
 <style scoped>

@@ -7,7 +7,7 @@
         <template #description>Modify DNS setting.</template>
         DNS
       </setting-item>
-      <setting-item></setting-item>
+      <setting-item type="switch" v-model="a"></setting-item>
       <setting-item></setting-item>
       <setting-item></setting-item>
     </div>
@@ -15,8 +15,11 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import TitleLayout from '../components/TitleLayout.vue'
 import SettingItem from '../components/SettingItem.vue'
+
+const a = ref(false)
 </script>
 
 <style scoped>
