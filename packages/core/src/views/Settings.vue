@@ -7,9 +7,23 @@
         <template #description>Modify DNS setting.</template>
         DNS
       </setting-item>
-      <setting-item type="switch" v-model="a"></setting-item>
-      <setting-item></setting-item>
-      <setting-item></setting-item>
+      <setting-item icon="../assets/export.svg">
+        <template #description>Export Koishi backup</template>
+        Export
+      </setting-item>
+      <setting-item icon="../assets/import.svg">
+        <template #description>Import Koishi from file</template>
+        Import
+      </setting-item>
+      <setting-item icon="../assets/point.svg" type="switch" v-model="instance">
+        <template #description>Use multi-instance mode</template>
+        Instance
+      </setting-item>
+      <setting-item icon="../assets/info.svg">
+        <!-- TODO: version -->
+        <template #description>Koishi Android 0.1.0</template>
+        About
+      </setting-item>
     </div>
   </title-layout>
 </template>
@@ -19,7 +33,7 @@ import { ref } from 'vue'
 import TitleLayout from '../components/TitleLayout.vue'
 import SettingItem from '../components/SettingItem.vue'
 
-const a = ref(false)
+const instance = ref(false)
 </script>
 
 <style scoped>
