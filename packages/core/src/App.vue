@@ -15,7 +15,7 @@ import Bg from './components/Bg.vue'
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity .7s ease;
+  transition: opacity .4s ease;
 }
 
 .v-enter-from,

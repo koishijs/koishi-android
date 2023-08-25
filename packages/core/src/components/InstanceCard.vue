@@ -10,24 +10,26 @@
         <p><small>{{ props.status }}</small></p>
       </div>
     </div>
-    <div v-if="focused" class="bottom">
-      <div>
-        <img src="../assets/play.svg" />
-        Start
+    <transition mode="out-in" name="control">
+      <div v-if="focused" class="bottom">
+        <div>
+          <img src="../assets/play.svg" />
+          Start
+        </div>
+        <div>
+          <img src="../assets/point.svg" />
+          WebUI
+        </div>
+        <div>
+          <img src="../assets/point.svg" />
+          Terminal
+        </div>
+        <div>
+          <img src="../assets/delete.svg" />
+          Delete
+        </div>
       </div>
-      <div>
-        <img src="../assets/point.svg" />
-        WebUI
-      </div>
-      <div>
-        <img src="../assets/point.svg" />
-        Terminal
-      </div>
-      <div>
-        <img src="../assets/delete.svg" />
-        Delete
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -100,16 +102,30 @@ onClickOutside(card, () => focused.value = false)
   justify-content: space-around;
 }
 
-.bottom:first-child {
+.bottom > div:first-child {
   border-radius: 0 0 0 12px;
 }
 
-.bottom:last-child {
+.bottom > div:last-child {
   border-radius: 0 0 12px 0;
 }
 
-.bottom div {
+.bottom > div {
   display: flex;
   align-items: center;
+}
+
+.control-enter-active,
+.control-leave-active {
+  transition: .3s ease;
+}
+
+.control-enter-from,
+.control-leave-to {
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: 1px #FFFFFF00 solid;
+  opacity: 0;
 }
 </style>
