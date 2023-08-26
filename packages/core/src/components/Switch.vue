@@ -2,7 +2,7 @@
   <div :class="{
     'switch': true,
     'switch-enabled': props.modelValue,
-  }" @click="emit('update:modelValue', !props.modelValue)">
+  }" @click.stop="emit('update:modelValue', !props.modelValue)">
     <div :class="{
       'circle': true,
       'circle-enabled': props.modelValue,
