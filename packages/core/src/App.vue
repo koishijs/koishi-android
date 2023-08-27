@@ -1,5 +1,5 @@
 <template>
-  <bg></bg>
+  <background></background>
   <router-view v-slot="{ Component }">
     <transition mode="out-in">
       <component :is="Component" :key="$route.path"/>
@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Bg from './components/Bg.vue'
+import Background from './components/Background.vue'
 </script>
 
 <style scoped>
