@@ -3,8 +3,8 @@
     <template #text>Settings</template>
     <template #left><img src="../assets/back.svg" @click="$router.go(-1)"/></template>
     <div class="list">
-      <setting-item icon="../assets/dns.svg">
-        <template #description>Modify DNS setting.</template>
+      <setting-item icon="../assets/dns.svg" @click="$router.push('/settings/dns')">
+        <template #description>Modify DNS settings</template>
         DNS
       </setting-item>
       <setting-item icon="../assets/export.svg">

@@ -24,6 +24,11 @@ const router = createRouter({
       name: 'settings',
       component: () => import('../views/Settings.vue')
     },
+    {
+      path: '/settings/dns',
+      name: 'dns',
+      component: () => import('../views/DNS.vue')
+    },
   ]
 })
 
