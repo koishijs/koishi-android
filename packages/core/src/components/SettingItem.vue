@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue'
 import Switch from '../components/Switch.vue'
 
 const props = defineProps({
