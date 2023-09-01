@@ -5,12 +5,14 @@
     <div class="wrapper">
       <text-field></text-field>
     </div>
+    <k-button />
   </title-layout>
 </template>
 
 <script lang="ts" setup>
 import TitleLayout from '../components/TitleLayout.vue'
 import TextField from '../components/TextField.vue'
+import KButton from '../components/Button.vue'
 </script>
 
 <style scoped>

@@ -6,14 +6,14 @@
       <p class="description"><slot name="description"></slot></p>
     </div>
     <img v-if="props.type === 'next'" src="../assets/next.svg" />
-    <Switch v-else-if="props.type === 'switch'"
+    <k-switch v-else-if="props.type === 'switch'"
       :modelValue="props.modelValue"
       @update:modelValue="(value: boolean) => emit('update:modelValue', value)"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Switch from '../components/Switch.vue'
+import KSwitch from '../components/Switch.vue'
 
 const props = defineProps({
   icon: String,
