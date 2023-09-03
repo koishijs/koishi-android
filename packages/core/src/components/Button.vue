@@ -1,7 +1,7 @@
 <template>
   <!-- TODO: click ripple -->
-  <div class="button" @click.stop="emit('click')">
-    <div class="inner">
+  <div class="k-button" @click.stop="emit('click')">
+    <div class="k-button-inner">
       <slot></slot>
     </div>
   </div>
@@ -12,7 +12,7 @@ const emit = defineEmits(['click'])
 </script>
 
 <style scoped>
-.button {
+.k-button {
   height: 40px;
   display: inline-block;
   background: #6750A4;
@@ -21,11 +21,11 @@ const emit = defineEmits(['click'])
 
 }
 
-.button:hover {
+.k-button:hover {
   box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
-.inner {
+.k-button-inner {
   width: 100%;
   height: 100%;
   border-radius: 100px;
@@ -39,7 +39,7 @@ const emit = defineEmits(['click'])
   cursor: default;
 }
 
-.inner:hover {
+.k-button-inner:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 </style>
