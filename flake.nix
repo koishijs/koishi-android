@@ -20,9 +20,11 @@
             cmdline-tools-latest
             build-tools-30-0-3
             build-tools-33-0-2
+            build-tools-34-0-0
             platform-tools
             platforms-android-30
             platforms-android-33
+            platforms-android-34
             emulator
           ]);
         in {
