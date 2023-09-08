@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "run-p dev:vite dev:ionic",
-    "dev:vite": "vite --host",
-    "dev:ionic": "ionic capacitor run android --external --livereload",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "dev": "./build/dev.sh",
+    "build": "./build/build.sh",
+    "vite": "vite --host",
+    "build-ui": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },

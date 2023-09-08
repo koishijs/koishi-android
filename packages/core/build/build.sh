@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+set -eu
+
+cat > capacitor.config.json <<EOF
 {
   "appId": "cn.anillc.koishi",
   "appName": "Koishi",
@@ -6,3 +10,9 @@
     "androidScheme": "https"
   }
 }
+EOF
+
+yarn build-ui
+yarn cap sync
+cd android
+gradle build

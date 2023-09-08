@@ -36,7 +36,7 @@
             eval = "$(which android-studio)";
           }];
           packages = with pkgs; [
-            android-sdk gradle yarn
+            android-sdk gradle yarn jq iproute2
           ];
         };
       };
