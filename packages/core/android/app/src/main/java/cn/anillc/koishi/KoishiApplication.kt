@@ -5,45 +5,39 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.util.Log
-import cn.anillc.koishi.services.KoishiService
-import cn.anillc.koishi.services.ProotService
 
 class KoishiApplication : Application() {
+    companion object {
+        lateinit var application: KoishiApplication
+    }
 
-    class KoishiServiceConnection : ServiceConnection {
-        var koishiBinder: ProotService.LocalBinder? = null
+    val serviceConnection = object : ServiceConnection {
+        private var koishiBinder: KoishiService.LocalBinder? = null
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
             when (name.className) {
                 KoishiService::class.qualifiedName ->
-                    koishiBinder = binder as ProotService.LocalBinder
+                    koishiBinder = binder as KoishiService.LocalBinder
+
                 else -> throw Exception("unknown service")
             }
-            Log.i(TAG, "onServiceConnected: ${KoishiService::class.qualifiedName}")
         }
+
         override fun onServiceDisconnected(name: ComponentName) = when (name.className) {
             KoishiService::class.qualifiedName -> koishiBinder = null
             else -> throw Exception("unknown service")
         }
     }
 
-    lateinit var envPath: String
-    val isEnvPathInitialized get() = ::envPath.isInitialized
-    val serviceConnection = KoishiServiceConnection()
-
     override fun onCreate() {
         super.onCreate()
-        val envPath = getEnvPath(this)
-        if (envPath != null) {
-            this.envPath = envPath
-            onInitialized()
-        }
+        application = this
     }
 
-    // be called after envPath is set
+    //     be called after envPath is set
     fun onInitialized() {
         bindService(
             Intent(this, KoishiService::class.java),
-            serviceConnection, BIND_AUTO_CREATE)
+            serviceConnection, BIND_AUTO_CREATE
+        )
     }
 }

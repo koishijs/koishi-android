@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.KoishiService" />
+        <service android:name=".KoishiService" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

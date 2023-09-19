@@ -1,81 +1,48 @@
 package cn.anillc.koishi
 
-import android.annotation.SuppressLint
-import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
-import android.content.DialogInterface
-import androidx.appcompat.app.AlertDialog
-import android.view.LayoutInflater
-import android.widget.TextView
-import android.widget.Toast
-import java.io.BufferedReader
+import android.system.Os
+import android.util.Log
 import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlin.concurrent.withLock
 
-val fileDir by lazy {
-    
+const val DEFAULT_DNS = "223.5.5.5"
+const val DEFAULT_TIMEZONE = "Asia/Shanghai"
+const val ABOUT =
+    "Koishi Android v${BuildConfig.VERSION_NAME}\n项目开源于 GitHub koishijs/koishi-android"
+const val TAG = "Koishi"
+
+
+val fileDir: String by lazy {
+    KoishiApplication.application.filesDir.path
 }
 
-fun startProotProcess(
-    cmd: String,
-    packagePath: String,
-    envPath: String,
-    env: Map<String, String> = mapOf(),
-): Process {
-    val processBuilder = ProcessBuilder(
-        "$packagePath/data/proot-static",
-        "-r", "$packagePath/data${envPath}",
-        "-b", "$packagePath/tmp:/tmp",
-        "-b", "$packagePath/shm:/dev/shm",
-        "-b", "$packagePath/data/nix:/nix",
-        "-b", "$packagePath/data:/data",
-        "-b", "$packagePath/home:/home",
-        "-b", "/proc:/proc",
-        "-b", "/dev:/dev",
-        "--sysvipc",
-        "--link2symlink",
-        "/bin/sh", "/bin/login", "-c", cmd
-    ).redirectErrorStream(true)
-    val environment = processBuilder.environment()
-    environment.putAll(env)
-    environment["PROOT_TMP_DIR"] = "$packagePath/tmp"
-    return processBuilder.start()
+val envPath: String by lazy {
+    val env = KoishiApplication.application.assets.open("bootstrap/env.txt")
+    env.reader().readText().trim()
 }
 
-fun startProotProcessWait(
-    cmd: String,
-    packagePath: String,
-    envPath: String,
-    env: Map<String, String> = mapOf(),
-): String? {
-    val process = startProotProcess(cmd, packagePath, envPath, env)
-    if (process.waitFor() != 0) return null
-    return process.inputStream.bufferedReader().use(BufferedReader::readText)
+fun init() {
+    val files = arrayOf(
+        File("$fileDir/home/instances"),
+        File("$fileDir/tmp"),
+        File("$fileDir/shm")
+    )
+    for (file in files) {
+        if (!(file.exists() || file.mkdirs())) throw Exception("failed to create home")
+    }
+//    fun copyData(context: Context) {
+//    unpackZip("bootstrap/bootstrap.zip", "data", context)
+//    }
+
 }
-
-//fun acceptAlert(context: Context, message: Int, callback: DialogInterface.OnClickListener) =
-//    AlertDialog.Builder(context)
-//        .setMessage(message)
-//        .setPositiveButton(android.R.string.ok, callback)
-//        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-//        .create().show()
-
-//@SuppressLint("InflateParams")
-//fun loadingAlert(context: Context, message: Int): () -> Unit {
-//    val layout = LayoutInflater.from(context).inflate(R.layout.loading_alert, null)
-//    layout.findViewById<TextView>(R.id.loading_alert_text).setText(message)
-//    val dialog = AlertDialog.Builder(context)
-//        .setCancelable(false)
-//        .setView(layout)
-//        .create()
-//    dialog.show()
-//    return dialog::dismiss
-//}
 
 fun Process.pid(): Int {
     val clazz = this::class.java
@@ -104,18 +71,60 @@ fun File.rm(): Boolean {
     return Runtime.getRuntime().exec("rm -rf $absolutePath").waitFor() == 0
 }
 
-fun AppCompatActivity.showToastOnUiThread(text: String) = runOnUiThread {
-    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-}
+fun unpackZip(fileName: String, target: File, context: Context) {
+    val executables = arrayListOf<String>()
+    val symlinks = arrayListOf<Pair<String, String>>()
 
-fun AppCompatActivity.showToastOnUiThread(resId: Int, vararg args: String) = runOnUiThread {
-    Toast.makeText(this, getString(resId, args), Toast.LENGTH_LONG).show()
-}
+    var zip: ZipInputStream? = null
+    try {
+        zip = ZipInputStream(context.assets.open(fileName))
+        var entry: ZipEntry?
+        while (run { entry = zip.nextEntry; entry } != null) {
+            val zipEntry = entry!!
+            when (zipEntry.name) {
+                // readLine will closes stream
+                "EXECUTABLES.txt" -> executables.addAll(zip.reader()
+                    .readText().split("\n").filter { it != "" })
 
-fun Context.showToast(text: String) {
-    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-}
+                "SYMLINKS.txt" -> symlinks.addAll(zip.reader()
+                    .readText().split("\n").filter { it != "" }.map {
+                        val (to, from) = it.split("←")
+                        to to from
+                    })
 
-fun Context.showToast(resId: Int, vararg args: String) {
-    Toast.makeText(this, getString(resId, args), Toast.LENGTH_LONG).show()
+                else -> {
+                    val name = zipEntry.name
+                    val file = File(target, name)
+                    if (zipEntry.isDirectory) {
+                        file.mkdirs()
+                    } else {
+                        file.parentFile!!.mkdirs()
+
+                        FileOutputStream(file).use {
+                            zip.copyTo(it)
+                        }
+                    }
+                }
+            }
+        }
+
+        for (executable in executables) {
+            try {
+                Os.chmod("${target.path}/$executable", 448) // 0700
+            } catch (e: Exception) {
+                Log.e(TAG, "install: failed to chmod: $executable", e)
+            }
+        }
+
+        for (symlink in symlinks) {
+            val (to, from) = symlink
+            try {
+                Os.symlink(to, "${target.path}/$from")
+            } catch (e: Exception) {
+                Log.e(TAG, "install: failed to create symlink: $to ← ${target.path}/$from", e)
+            }
+        }
+    } finally {
+        zip?.close()
+    }
 }
