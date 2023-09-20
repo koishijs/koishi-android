@@ -1,9 +1,25 @@
 <template>
-  <div class="splash" @click="$router.push('/instances')">
+  <div class="splash">
     <div class="welcome">Welcome to Koishi</div>
     <div class="starting">Starting koishi......</div>
   </div>
 </template>
+
+<script lang="ts" setup>
+import { useRouter } from 'vue-router'
+import { native } from '../native'
+import { sleep } from '../utils'
+
+const router = useRouter()
+
+;(async () => {
+  await Promise.all([
+    sleep(3000),
+    native.starting(),
+  ])
+  router.push('/instances')
+})()
+</script>
 
 <style scoped>
 .splash {

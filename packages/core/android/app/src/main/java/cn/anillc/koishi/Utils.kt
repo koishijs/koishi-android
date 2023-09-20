@@ -29,21 +29,6 @@ val envPath: String by lazy {
     env.reader().readText().trim()
 }
 
-fun init() {
-    val files = arrayOf(
-        File("$fileDir/home/instances"),
-        File("$fileDir/tmp"),
-        File("$fileDir/shm")
-    )
-    for (file in files) {
-        if (!(file.exists() || file.mkdirs())) throw Exception("failed to create home")
-    }
-//    fun copyData(context: Context) {
-//    unpackZip("bootstrap/bootstrap.zip", "data", context)
-//    }
-
-}
-
 fun Process.pid(): Int {
     val clazz = this::class.java
     val pid = clazz.getDeclaredField("pid")
