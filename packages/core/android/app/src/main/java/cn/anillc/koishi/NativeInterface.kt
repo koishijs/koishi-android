@@ -1,5 +1,6 @@
 package cn.anillc.koishi
 
+import android.widget.Toast
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod

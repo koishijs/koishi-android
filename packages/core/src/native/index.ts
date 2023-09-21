@@ -1,6 +1,6 @@
 import { inject } from 'vue'
 import type { NativeInterface } from './register'
 
-const native = inject<NativeInterface>('native')!
+const useNative = () => inject<NativeInterface>('native')!
 
-export { native }
+export { useNative }

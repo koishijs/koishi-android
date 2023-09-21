@@ -17,7 +17,23 @@ class MainActivity : BridgeActivity() {
         for (file in files) {
             if (!(file.exists() || file.mkdirs())) throw Exception("failed to create home")
         }
-        KoishiApplication.application.onInitialized()
-//    unpackZip("bootstrap/bootstrap.zip", "data", context)
+        val nix = File("$fileDir/data/nix")
+        if (!nix.exists()) {
+            if (!File("$fileDir/data").mkdirs()) throw Exception("failed to create data dir")
+            Thread {
+                val tmp = File("$fileDir/tmp/.data")
+                if (tmp.exists()) {
+                    if (!tmp.rm()) throw Exception("failed to remove tmp instance")
+                }
+                if (!tmp.mkdirs()) throw Exception("failed to create tmp instance")
+                unpackZip("bootstrap/bootstrap.zip", tmp, this)
+                if (!tmp.renameTo(nix)) {
+                    throw Exception("failed to move tmp to instance")
+                }
+                KoishiApplication.application.onInitialized()
+            }.start()
+        } else {
+            KoishiApplication.application.onInitialized()
+        }
     }
 }

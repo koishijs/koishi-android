@@ -7,9 +7,10 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { native } from '../native'
+import { useNative } from '../native'
 import { sleep } from '../utils'
 
+const native = useNative()
 const router = useRouter()
 
 ;(async () => {
