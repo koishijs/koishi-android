@@ -1,6 +1,7 @@
 package cn.anillc.koishi
 
-import android.widget.Toast
+import com.getcapacitor.JSArray
+import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod
@@ -18,5 +19,22 @@ class NativeInterface : Plugin() {
                 application.status = KoishiApplication.Status.Wait(call)
             }
         }
+    }
+
+    @PluginMethod
+    fun instances(call: PluginCall) {
+        // TODO: will binder be null?
+        val service = KoishiApplication.application.serviceConnection.koishiBinder!!.service
+        val result = JSObject()
+        result.put("value", JSArray(service.instances.map { (k, v) ->
+            val instance = JSObject()
+            instance.put("name", k)
+            instance.put("status", when (v.status()) {
+                is Proot.Status.Starting, is Proot.Status.Running -> "Running"
+                else  -> "Stopped"
+            })
+            instance
+        }))
+        call.resolve(result)
     }
 }

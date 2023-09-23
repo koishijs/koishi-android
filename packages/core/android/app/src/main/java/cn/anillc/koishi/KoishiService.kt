@@ -13,7 +13,7 @@ class KoishiService : Service() {
     private val binder by lazy { LocalBinder(this) }
     override fun onBind(intent: Intent?): IBinder = binder
 
-    private val instances = mutableMapOf<String, Instance>()
+    val instances = mutableMapOf<String, Instance>()
 
     override fun onCreate() {
         super.onCreate()

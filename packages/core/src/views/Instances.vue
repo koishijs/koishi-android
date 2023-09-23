@@ -9,16 +9,26 @@
       <p>System Android 11</p>
     </div>
     <div class="instances">
-      <instance-card :focused="true" name="default" status="Stopped"></instance-card>
-      <instance-card name="default" status="Stopped"></instance-card>
-      <instance-card name="default" status="Stopped"></instance-card>
+      <instance-card v-for="(instance, i) in instances"
+        :focused="i === 0" :name="instance.name"
+        :status="instance.status" :key="i"/>
     </div>
   </title-layout>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import TitleLayout from '../components/TitleLayout.vue'
 import InstanceCard from '../components/InstanceCard.vue'
+import { useNative } from '../native'
+import type { Instance } from '@/native/register'
+
+const native = useNative()
+const instances = ref<Instance[]>()
+
+;(async () => {
+  instances.value = (await native.instances()).value
+})()
 </script>
 
 <style scoped>

@@ -94,4 +94,8 @@ class Instance(
         this.proot?.stop()
         this.proot = null
     }
+
+    fun status(): Proot.Status? {
+        return this.proot?.status()
+    }
 }

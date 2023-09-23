@@ -12,8 +12,10 @@ class KoishiApplication : Application() {
         lateinit var application: KoishiApplication
     }
 
-    val serviceConnection = object : ServiceConnection {
-        private var koishiBinder: KoishiService.LocalBinder? = null
+    val serviceConnection = KoishiServiceConnection()
+
+    class KoishiServiceConnection : ServiceConnection {
+        var koishiBinder: KoishiService.LocalBinder? = null
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
             when (name.className) {
                 KoishiService::class.qualifiedName ->
@@ -34,6 +36,7 @@ class KoishiApplication : Application() {
         data object Initialized : Status()
         data class Wait(val call: PluginCall) : Status()
     }
+
     var status: Status = Status.Uninitialized
 
     override fun onCreate() {
@@ -42,10 +45,10 @@ class KoishiApplication : Application() {
     }
 
     fun onInitialized() {
-//        bindService(
-//            Intent(this, KoishiService::class.java),
-//            serviceConnection, BIND_AUTO_CREATE
-//        )
+        bindService(
+            Intent(this, KoishiService::class.java),
+            serviceConnection, BIND_AUTO_CREATE
+        )
         synchronized(this) {
             val status = this.status
             if (status is Status.Uninitialized) {
