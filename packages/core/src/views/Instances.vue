@@ -10,8 +10,7 @@
     </div>
     <div class="instances">
       <instance-card v-for="(instance, i) in instances"
-        :focused="i === 0" :name="instance.name"
-        :status="instance.status" :key="i"/>
+        :key="i" :focused="i === 0" :instance="instance"/>
     </div>
   </title-layout>
 </template>
@@ -26,9 +25,12 @@ import type { Instance } from '@/native/register'
 const native = useNative()
 const instances = ref<Instance[]>()
 
-;(async () => {
+async function sync() {
   instances.value = (await native.instances()).value
-})()
+}
+
+sync()
+setInterval(sync, 1000)
 </script>
 
 <style scoped>

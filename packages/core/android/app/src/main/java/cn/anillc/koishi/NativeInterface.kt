@@ -37,4 +37,20 @@ class NativeInterface : Plugin() {
         }))
         call.resolve(result)
     }
+
+    @PluginMethod
+    fun startInstance(call: PluginCall) {
+        val service = KoishiApplication.application.serviceConnection.koishiBinder!!.service
+        val name = call.data.getString("name")
+        service.instances[name]!!.start()
+        call.resolve()
+    }
+
+    @PluginMethod
+    fun stopInstance(call: PluginCall) {
+        val service = KoishiApplication.application.serviceConnection.koishiBinder!!.service
+        val name = call.data.getString("name")
+        service.instances[name]!!.stop()
+        call.resolve()
+    }
 }

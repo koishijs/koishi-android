@@ -6,15 +6,19 @@
     }">
       <img class="icon" src="../assets/koishi.png" />
       <div class="text">
-        <b>{{ props.name }}</b>
-        <p><small>{{ props.status }}</small></p>
+        <b>{{ props.instance.name }}</b>
+        <p><small>{{ props.instance.status }}</small></p>
       </div>
     </div>
     <transition mode="out-in" name="control">
       <div v-if="focused" class="bottom">
-        <div>
+        <div v-if="props.instance.status === 'Stopped'" @click="startInstance">
           <img src="../assets/play.svg" />
           Start
+        </div>
+        <div v-else @click="stopInstance">
+          <img src="../assets/stop.svg" />
+          Stop
         </div>
         <div>
           <img src="../assets/point.svg" />
@@ -36,16 +40,28 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'
+import type { Instance } from '../native/register'
+import { useNative } from '../native'
 
-const props = defineProps({
-  name: String,
-  status: String,
-  focused: Boolean,
-})
+const props = defineProps<{
+  focused: boolean,
+  instance: Instance,
+}>()
 
 const card = ref()
 const focused  = ref(props.focused)
 onClickOutside(card, () => focused.value = false)
+
+const native = useNative()
+
+// TODO: debounce
+async function startInstance() {
+  await native.startInstance({ name: props.instance.name })
+}
+
+async function stopInstance() {
+  await native.stopInstance({ name: props.instance.name })
+}
 </script>
 
 <style scoped>

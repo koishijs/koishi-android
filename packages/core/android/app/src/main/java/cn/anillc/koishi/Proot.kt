@@ -46,14 +46,18 @@ open class Proot(
     override fun run() {
         val input = synchronized(this) { this.process!!.inputStream }
         input.bufferedReader().use {
-            val stream = it.lines()
-            for (line in stream) {
-                val pid = pidRegex.matchEntire(line) ?: continue
-                synchronized(this@Proot) {
-                    this.status = Status.Running(pid.groupValues[1].toInt())
+            var starting = true
+            for (line in it.lines()) {
+                if (starting) {
+                    val pid = pidRegex.matchEntire(line)
+                    if (pid != null) {
+                        synchronized(this@Proot) {
+                            this.status = Status.Running(pid.groupValues[1].toInt())
+                        }
+                    }
+                    starting = false
+                    continue
                 }
-            }
-            for (line in stream) {
                 val status = statusRegex.matchEntire(line)
                 if (status != null) {
                     val code = status.groupValues[1].toInt()
