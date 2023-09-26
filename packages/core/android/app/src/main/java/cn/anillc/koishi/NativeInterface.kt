@@ -1,5 +1,7 @@
 package cn.anillc.koishi
 
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
@@ -9,6 +11,13 @@ import com.getcapacitor.annotation.CapacitorPlugin
 
 @CapacitorPlugin(name = "native")
 class NativeInterface : Plugin() {
+    private lateinit var preferences: SharedPreferences
+
+    override fun handleOnStart() {
+        super.handleOnStart()
+        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    }
+
     @PluginMethod
     fun starting(call: PluginCall) {
         val application = KoishiApplication.application
@@ -52,5 +61,37 @@ class NativeInterface : Plugin() {
         val name = call.data.getString("name")
         service.instances[name]!!.stop()
         call.resolve()
+    }
+
+    @PluginMethod
+    fun getPreferenceString(call: PluginCall) {
+        val value = preferences.getString(call.data.getString("key"), call.data.getString("default"))
+        val res = JSObject()
+        res.put("value", value)
+        call.resolve(res)
+    }
+
+    @PluginMethod
+    fun getPreferenceBoolean(call: PluginCall) {
+        val value = preferences.getBoolean(call.data.getString("key"), call.data.getBoolean("default"))
+        val res = JSObject()
+        res.put("value", value)
+        call.resolve(res)
+    }
+
+    @PluginMethod
+    fun setPreferenceString(call: PluginCall) {
+        with(preferences.edit()) {
+            putString(call.data.getString("key"), call.data.getString("value"))
+            apply()
+        }
+    }
+
+    @PluginMethod
+    fun setPreferenceBoolean(call: PluginCall) {
+        with(preferences.edit()) {
+            putBoolean(call.data.getString("key"), call.data.getBoolean("value"))
+            apply()
+        }
     }
 }
