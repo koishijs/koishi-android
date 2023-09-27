@@ -14,6 +14,7 @@ export interface NativeInterface {
   getPreferenceBoolean(value: { key: string, default: boolean }): Promise<boolean>
   setPreferenceString(value: { key: string, value: string }): Promise<void>
   setPreferenceBoolean(value: { key: string, value: boolean }): Promise<void>
+  toast(value: { value: string }): Promise<void>
 }
 
 const native = registerPlugin<NativeInterface>('native')

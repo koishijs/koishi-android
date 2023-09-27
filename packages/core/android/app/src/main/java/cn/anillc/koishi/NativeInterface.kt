@@ -1,6 +1,7 @@
 package cn.anillc.koishi
 
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
@@ -38,6 +39,7 @@ class NativeInterface : Plugin() {
         result.put("value", JSArray(service.instances.map { (k, v) ->
             val instance = JSObject()
             instance.put("name", k)
+            instance.put("link", v.link)
             instance.put("status", when (v.status()) {
                 is Proot.Status.Starting, is Proot.Status.Running -> "Running"
                 else  -> "Stopped"
@@ -93,5 +95,11 @@ class NativeInterface : Plugin() {
             putBoolean(call.data.getString("key"), call.data.getBoolean("value"))
             apply()
         }
+    }
+
+    @PluginMethod
+    fun toast(call: PluginCall) {
+        Toast.makeText(context, call.getString("value"), Toast.LENGTH_LONG).show()
+        call.resolve()
     }
 }
