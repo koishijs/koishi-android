@@ -12,13 +12,9 @@
     </div>
     <transition mode="out-in" name="control">
       <div v-if="focused" class="bottom">
-        <div v-if="props.instance.status === 'Stopped'" @click="startInstance">
-          <img src="../assets/play.svg" />
-          Start
-        </div>
-        <div v-else @click="stopInstance">
-          <img src="../assets/stop.svg" />
-          Stop
+        <div @click="toggleInstance">
+          <img :src="started ? stopIcon : startIcon" />
+          {{ started ? 'Stop' : 'Start' }}
         </div>
         <div>
           <img src="../assets/point.svg" />
@@ -38,10 +34,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import type { Instance } from '../native/register'
 import { useNative } from '../native'
+import startIcon from '../assets/play.svg'
+import stopIcon from '../assets/stop.svg'
 
 const props = defineProps<{
   focused: boolean,
@@ -50,17 +48,18 @@ const props = defineProps<{
 
 const card = ref()
 const focused  = ref(props.focused)
+const started = computed(() => props.instance.status === 'Running')
 onClickOutside(card, () => focused.value = false)
 
 const native = useNative()
 
 // TODO: debounce
-async function startInstance() {
-  await native.startInstance({ name: props.instance.name })
-}
-
-async function stopInstance() {
-  await native.stopInstance({ name: props.instance.name })
+async function toggleInstance() {
+  if (started.value) {
+    await native.stopInstance({ name: props.instance.name })
+  } else {
+    await native.startInstance({ name: props.instance.name })
+  }
 }
 </script>
 
@@ -114,6 +113,7 @@ async function stopInstance() {
   padding: 12px;
   border-top: 1px #CAC4D0 solid;
   display: flex;
+  flex-grow: 1;
   align-items: center;
   justify-content: space-around;
 }
