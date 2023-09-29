@@ -29,6 +29,11 @@ const router = createRouter({
       name: 'dns',
       component: () => import('../views/DNS.vue')
     },
+    {
+      path: '/webui',
+      name: 'webui',
+      component: () => import('../views/WebUI.vue')
+    },
   ]
 })
 

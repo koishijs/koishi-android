@@ -16,7 +16,7 @@
           <img :src="started ? stopIcon : startIcon" />
           {{ started ? 'Stop' : 'Start' }}
         </div>
-        <div>
+        <div @click="openWebUI">
           <img src="../assets/point.svg" />
           WebUI
         </div>
@@ -35,6 +35,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { onClickOutside } from '@vueuse/core'
 import type { Instance } from '../native/register'
 import { useNative } from '../native'
@@ -49,6 +50,7 @@ const props = defineProps<{
 const card = ref()
 const focused  = ref(props.focused)
 const started = computed(() => props.instance.status === 'Running')
+const router = useRouter()
 onClickOutside(card, () => focused.value = false)
 
 const native = useNative()
@@ -59,6 +61,15 @@ async function toggleInstance() {
     await native.stopInstance({ name: props.instance.name })
   } else {
     await native.startInstance({ name: props.instance.name })
+  }
+}
+
+function openWebUI() {
+  const link = props.instance.link
+  if (!link) {
+    native.toast({ value: 'Instance is not started.' })
+  } else {
+    router.push({ path: '/webui', query: { url: link } })
   }
 }
 </script>

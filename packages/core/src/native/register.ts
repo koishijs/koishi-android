@@ -2,6 +2,7 @@ import { registerPlugin } from '@capacitor/core'
 
 export interface Instance {
   name: string
+  link: string
   status: 'Running' | 'Stopped'
 }
 
