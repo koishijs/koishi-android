@@ -37,3 +37,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference-ktx:1.2.1'
 }
+
+apply from: 'capacitor.build.gradle'
