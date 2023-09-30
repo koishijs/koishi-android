@@ -11,6 +11,10 @@
     <div class="instances">
       <instance-card v-for="(instance, i) in instances"
         :key="i" :focused="i === 0" :instance="instance"/>
+      <div @click="createInstance" class="create">
+          <img src="../assets/add.svg" />
+          New Instance
+      </div>
     </div>
   </title-layout>
 </template>
@@ -31,6 +35,13 @@ async function sync() {
 
 sync()
 setInterval(sync, 1000)
+
+async function createInstance() {
+  const name = (Math.random() + 1).toString(36).substring(7)
+  const { value } = await native.createInstance({ name: `instance-${name}` })
+  // name existed
+  if (!value) await createInstance()
+}
 </script>
 
 <style scoped>
@@ -47,5 +58,22 @@ setInterval(sync, 1000)
   display: flex;
   flex-direction: column;
   row-gap: 20px;
+}
+
+.create {
+  width: 100%;
+  height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  box-shadow: 0px 0px 24px rgba(85, 70, 163, 0.15);
+  background: #FFFFFFB2;
+  column-gap: 10px;
+}
+
+.create img {
+  width: 24px;
+  height: 24px;
 }
 </style>

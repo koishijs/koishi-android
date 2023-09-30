@@ -66,6 +66,21 @@ class NativeInterface : Plugin() {
     }
 
     @PluginMethod
+    fun createInstance(call: PluginCall) {
+        val service = KoishiApplication.application.serviceConnection.koishiBinder!!.service
+        val name = call.data.getString("name")!!
+        val instance = service.instances[name]
+        val res = JSObject()
+        if (instance != null) {
+            res.put("value", false)
+            call.resolve(res)
+            return
+        }
+        service.instances[name] = Instance(name, context)
+        res.put("value", true)
+    }
+
+    @PluginMethod
     fun getPreferenceString(call: PluginCall) {
         val value = preferences.getString(call.data.getString("key"), call.data.getString("default"))
         val res = JSObject()
