@@ -24,7 +24,7 @@
           <img src="../assets/point.svg" />
           Terminal
         </div>
-        <div>
+        <div @click="removeInstance">
           <img src="../assets/delete.svg" />
           Delete
         </div>
@@ -71,6 +71,10 @@ function openWebUI() {
   } else {
     router.push({ path: '/webui', query: { url: link } })
   }
+}
+
+function removeInstance() {
+  native.removeInstance({ name: props.instance.name })
 }
 </script>
 

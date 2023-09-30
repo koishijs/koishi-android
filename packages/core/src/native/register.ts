@@ -12,6 +12,7 @@ export interface NativeInterface {
   startInstance(value: { name: string }): Promise<{ value: boolean }>
   stopInstance(value: { name: string }): Promise<{ value: boolean }>
   createInstance(value: { name: string }): Promise<{ value: boolean }>
+  removeInstance(value: { name: string }): Promise<{ value: boolean }>
   getPreferenceString(value: { key: string, default: string }): Promise<string>
   getPreferenceBoolean(value: { key: string, default: boolean }): Promise<boolean>
   setPreferenceString(value: { key: string, value: string }): Promise<void>

@@ -9,6 +9,7 @@ import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
+import java.io.File
 
 @CapacitorPlugin(name = "native")
 class NativeInterface : Plugin() {
@@ -78,6 +79,18 @@ class NativeInterface : Plugin() {
         }
         service.instances[name] = Instance(name, context)
         res.put("value", true)
+    }
+
+    @PluginMethod
+    fun removeInstance(call: PluginCall) {
+        val service = KoishiApplication.application.serviceConnection.koishiBinder!!.service
+        val name = call.data.getString("name")!!
+        val instance = service.instances[name]
+        instance!!.stop()
+        val file = File("$fileDir/home/instances/$name")
+        if (file.rm()) {
+            service.instances.remove(name)
+        }
     }
 
     @PluginMethod
