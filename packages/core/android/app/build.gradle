@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    namespace "cn.anillc.koishi"
+    compileSdk 34
+    defaultConfig {
+        applicationId "cn.anillc.koishi"
+        versionCode 1
+        versionName "1.0"
+
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        minSdkVersion 28
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildFeatures {
+        buildConfig true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    implementation project(':capacitor-android')
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+}
+
+apply from: 'capacitor.build.gradle'
