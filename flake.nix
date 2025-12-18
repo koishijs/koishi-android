@@ -23,6 +23,7 @@
             build-tools-34-0-0
             platform-tools
             platforms-android-30
+            platforms-android-32
             platforms-android-33
             platforms-android-34
             emulator
@@ -36,7 +37,7 @@
             eval = "$(which android-studio)";
           }];
           packages = with pkgs; [
-            android-sdk gradle yarn jq iproute2
+            android-sdk gradle jdk17 yarn jq iproute2
           ];
         };
       };

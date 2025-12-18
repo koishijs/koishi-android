@@ -30,7 +30,7 @@
         };
         apps = let
             app = bootstrap: mkApp {
-                drv = pkgs.writeScriptBin "copy" ''
+                drv = pkgs.writeShellScriptBin "copy" ''
                     FOLDER=../app/src/main/assets/bootstrap
                     mkdir -p $FOLDER
                     cp -f ${bootstrap}/* $FOLDER
