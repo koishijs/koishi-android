@@ -40,7 +40,7 @@ class KoishiService : ProotService() {
 
     fun stopKoishi() = stopProot()
 
-    private val linkRegex = Regex(".*\\[I] app server listening at (.+)$")
+    private val linkRegex = Regex(".*\\[I] server server listening at (.+)$")
     override fun onInput(line: String) {
         if (link.get() == null) {
             val match = linkRegex.matchEntire(line.removeVt100ControlChars())
