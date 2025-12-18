@@ -21,14 +21,10 @@ class KoishiService : ProotService() {
                 rm -rf koishi-app-staging
             fi
             if [ ! -d "koishi-app" ]; then
-                if [ ! -f "koishi.zip" ]; then
-                    echo Failed to extract koishi.
-                    exit 1
-                fi
                 echo Initializing koishi...
-                unzip -d koishi-app-staging koishi.zip > /dev/null 2>&1
-                mv koishi-app-staging koishi-app
-                rm -f koishi.zip
+                /home/yarn.js create koishi koishi-app --yes --prod
+                cd koishi-app
+                /home/yarn.js install
             fi
             echo Starting koishi...
             cd koishi-app

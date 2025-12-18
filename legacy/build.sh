@@ -21,7 +21,7 @@ buildAssets() {
     BP="https://github.com/koishijs/boilerplate/releases/download/$BP_TAG/boilerplate-$BP_TAG-linux-arm64-node20.zip"
     curl -L -o koishi.zip $BP
     checkStatus $? 'boilerplate 下载失败。'
-    curl -O https://repo.yarnpkg.com/3.2.0/packages/yarnpkg-cli/bin/yarn.js
+    curl -O https://repo.yarnpkg.com/4.12.0/packages/yarnpkg-cli/bin/yarn.js
     checkStatus $? 'yarn.js 下载失败。'
     popd
 }
