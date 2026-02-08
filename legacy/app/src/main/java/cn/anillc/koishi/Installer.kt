@@ -21,14 +21,13 @@ fun install(context: Context): String {
     val packagePath = context.filesDir.path
     val home = File("${packagePath}/home")
     if (!home.exists()) {
-        if (!home.mkdirs()) throw Exception("failed to copy koishi.zip to home")
+        if (!home.mkdirs()) throw Exception("failed to create home folder")
         val copyFile = { src: String, dst: String ->
             context.assets.open(src).use {
                 FileOutputStream(dst).use(it::copyTo)
             }
         }
         copyFile("bootstrap/yarn.js", "$packagePath/home/yarn.js")
-        copyFile("bootstrap/koishi.zip", "$packagePath/home/koishi.zip")
     }
     return copyData(context)
 }

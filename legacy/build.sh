@@ -16,12 +16,7 @@ buildAssets() {
     popd
 
     pushd app/src/main/assets/bootstrap
-    BP_RELEASE=$(curl "https://api.github.com/repos/koishijs/boilerplate/releases/latest")
-    BP_TAG=$(echo "$BP_RELEASE" | jq -r '.tag_name')
-    BP="https://github.com/koishijs/boilerplate/releases/download/$BP_TAG/boilerplate-$BP_TAG-linux-arm64-node20.zip"
-    curl -L -o koishi.zip $BP
-    checkStatus $? 'boilerplate 下载失败。'
-    curl -O https://repo.yarnpkg.com/4.12.0/packages/yarnpkg-cli/bin/yarn.js
+    curl -L -o yarn.js https://repo.yarnpkg.com/4.12.0/packages/yarnpkg-cli/bin/yarn.js
     checkStatus $? 'yarn.js 下载失败。'
     popd
 }
@@ -30,4 +25,4 @@ if [ ! -d app/src/main/assets/bootstrap ]; then
     buildAssets
 fi
 
-nix develop --command bash -c 'export JAVA_HOME=$(dirname $(dirname $(which java))) && ./gradlew build --no-daemon'
+nix develop .. --command bash -c 'export JAVA_HOME=$(dirname $(dirname $(which java))) && ./gradlew build --no-daemon'
