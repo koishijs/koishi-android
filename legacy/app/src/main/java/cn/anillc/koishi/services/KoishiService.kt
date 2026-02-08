@@ -25,7 +25,6 @@ class KoishiService : ProotService() {
                 /home/yarn.js create koishi koishi-app --yes --prod
                 cd koishi-app
                 /home/yarn.js install
-                sed -i 's|https://registry.koishi.chat/index.json|https://koishi-registry.yumetsuki.moe/index.json|g' koishi.yml
             fi
             echo Starting koishi...
             cd /home/koishi-app
