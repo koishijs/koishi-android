@@ -22,7 +22,7 @@ class KoishiService : ProotService() {
             fi
             if [ ! -d "koishi-app" ]; then
                 echo Initializing koishi...
-                /home/yarn.js create koishi koishi-app --yes --prod
+                /home/yarn.js create koishi koishi-app --yes --prod --registry https://registry.npmmirror.com
                 cd koishi-app
                 /home/yarn.js install
             fi
